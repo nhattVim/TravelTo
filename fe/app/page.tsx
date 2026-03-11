@@ -1,65 +1,62 @@
-import Image from "next/image";
+import Link from "next/link";
+import { HeroBanner } from "@/components/home/hero-banner";
+import { ProvinceGrid } from "@/components/home/province-grid";
+import { SectionTitle } from "@/components/shared/section-title";
+import { TourCard } from "@/components/tours/tour-card";
+import { getHighlights, getProvinceOverview } from "@/lib/api/public";
 
-export default function Home() {
+export default async function HomePage() {
+  const [provinces, highlights] = await Promise.all([getProvinceOverview(), getHighlights()]);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="space-y-14 md:space-y-20">
+      <HeroBanner />
+
+      <section className="space-y-6">
+        <SectionTitle
+          eyebrow="Theo Tỉnh Thành"
+          title="Bạn muốn đi đâu ở Việt Nam?"
+          subtitle="Mỗi tỉnh thành là một vibe du lịch khác nhau. Chọn địa điểm và xem ngay các tour đang mở bán."
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+        <ProvinceGrid provinces={provinces} />
+      </section>
+
+      <section className="space-y-6">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <SectionTitle
+            eyebrow="Hot Tours"
+            title="Tour nổi bật tuần này"
+            subtitle="Danh sách tour được cộng đồng TravelTo quan tâm nhiều nhất trong tuần."
+          />
+          <Link href="/tours" className="rounded-full bg-[#0a7d59] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#085a41]">
+            Xem tất cả tour
+          </Link>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {highlights.length > 0 ? (
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {highlights.map((tour) => (
+              <TourCard key={tour.id} tour={tour} />
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-dashed border-[#95d8bf] bg-white p-8 text-center text-sm text-[#2e5a4d]">
+            Dữ liệu tour đang được cập nhật, bạn quay lại sau ít phút nhé.
+          </div>
+        )}
+      </section>
+
+      <section className="rounded-3xl border border-[#cdece0] bg-white px-6 py-8 md:px-10">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0a7d59]">Bắt đầu nhanh</p>
+            <h3 className="mt-2 text-2xl font-semibold text-[#083b2d]">Đăng nhập Google và đặt tour chỉ trong vài bước</h3>
+          </div>
+          <Link href="/login" className="inline-flex w-fit rounded-full border border-[#0a7d59] px-6 py-3 text-sm font-semibold text-[#0a7d59] transition hover:bg-[#e6fff4]">
+            Đăng nhập ngay
+          </Link>
         </div>
-      </main>
+      </section>
     </div>
   );
 }
