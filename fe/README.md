@@ -8,12 +8,13 @@ Frontend cua TravelTo su dung:
 
 ## Cau truc thu muc
 
-- app/: Route pages (home, tours, login, bookings, admin)
-- app/api/auth/[...nextauth]/: Auth.js route handler
-- components/: UI theo module (home, tours, layout, shared)
-- lib/api/: API client public/private + auth exchange
-- auth.ts: Cau hinh Auth.js
-- proxy.ts: Bao ve route bookings/admin theo session va role
+- src/app/: Route pages (home, tours, login, bookings, admin)
+- src/app/api/auth/[...nextauth]/: Auth.js route handler
+- src/components/: UI theo module (home, tours, layout, shared)
+- src/lib/api/: API client public/private + auth exchange
+- src/types/: Domain types va next-auth type augmentation
+- src/auth.ts: Cau hinh Auth.js
+- src/proxy.ts: Bao ve route bookings/admin theo session va role
 
 ## Chay local
 

@@ -1,5 +1,0 @@
-{
-    "java.project.sourcePaths": ["be/src/main/java", "be/src/test/java"],
-    "java.project.outputPath": "be/target/classes",
-    "java.configuration.updateBuildConfiguration": "automatic"
-}
