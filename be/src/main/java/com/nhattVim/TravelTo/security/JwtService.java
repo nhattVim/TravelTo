@@ -57,13 +57,18 @@ public class JwtService {
     if (secret == null || secret.isBlank()) {
       throw new IllegalStateException("JWT secret chưa được cấu hình");
     }
-    if (secret.length() < 32) {
-      return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-    }
+
+    // Support both Base64/Base64URL secrets and plain text secrets.
+    byte[] keyBytes;
     try {
-      return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
-    } catch (IllegalArgumentException ex) {
-      return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+      keyBytes = Decoders.BASE64.decode(secret);
+    } catch (RuntimeException ex) {
+      try {
+        keyBytes = Decoders.BASE64URL.decode(secret);
+      } catch (RuntimeException ignored) {
+        keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+      }
     }
+    return Keys.hmacShaKeyFor(keyBytes);
   }
 }
