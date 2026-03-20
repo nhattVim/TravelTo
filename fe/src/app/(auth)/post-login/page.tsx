@@ -12,5 +12,9 @@ export default async function PostLoginPage() {
     redirect("/set-password");
   }
 
+  if (session.user.role === "ADMIN") {
+    redirect("/admin");
+  }
+
   redirect("/");
 }

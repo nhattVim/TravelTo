@@ -24,11 +24,6 @@ export async function SiteHeader() {
               {link.label}
             </Link>
           ))}
-          {session?.user?.role === "ADMIN" ? (
-            <Link href="/admin/bookings" className="rounded-full bg-[#083f30] px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white">
-              Admin
-            </Link>
-          ) : null}
         </nav>
 
         {session?.user ? (

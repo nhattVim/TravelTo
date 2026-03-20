@@ -21,20 +21,20 @@ export default async function AdminBookingsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0a7d59]">Admin Panel</p>
-        <h1 className="mt-2 text-3xl font-bold text-[#083b2d]">Quản trị booking</h1>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0a7d59]">Booking Management</p>
+        <h1 className="mt-2 text-3xl font-semibold text-[#083b2d]">Quản trị booking</h1>
       </div>
 
       {bookings.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-[#8ed5be] bg-white p-6 text-sm text-[#2f5b4e]">
+        <div className="rounded-2xl border border-dashed border-[#98d8c0] bg-[#f8fffb] p-6 text-sm text-[#355a4d]">
           Hiện chưa có booking nào.
         </div>
       ) : (
         <div className="space-y-4">
           {bookings.map((booking) => (
-            <article key={booking.id} className="rounded-2xl border border-[#cfece1] bg-white p-5">
+            <article key={booking.id} className="rounded-2xl border border-[#d5ede4] bg-[#fafffd] p-5">
               <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-                <div className="space-y-1 text-sm text-[#2f5a4d]">
+                <div className="space-y-1 text-sm text-[#355a4d]">
                   <p className="text-xs font-semibold uppercase tracking-wide text-[#0a7d59]">#{booking.id}</p>
                   <h2 className="text-lg font-semibold text-[#083b2d]">{booking.tourTitle}</h2>
                   <p>Khách: {booking.customerName} ({booking.customerEmail})</p>
@@ -49,7 +49,7 @@ export default async function AdminBookingsPage() {
                     <select
                       name="status"
                       defaultValue={booking.status}
-                      className="block rounded-xl border border-[#92d7c0] bg-white px-3 py-2 text-sm text-[#164e3f]"
+                      className="block rounded-xl border border-[#9ed8c3] bg-white px-3 py-2 text-sm text-[#184f41]"
                     >
                       <option value="PENDING">PENDING</option>
                       <option value="CONFIRMED">CONFIRMED</option>

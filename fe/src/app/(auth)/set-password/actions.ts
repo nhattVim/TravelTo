@@ -32,5 +32,9 @@ export async function createPasswordAction(formData: FormData) {
     redirect("/set-password?error=failed");
   }
 
+  if (session.user?.role === "ADMIN") {
+    redirect("/admin");
+  }
+
   redirect("/?password-set=1");
 }

@@ -20,7 +20,7 @@ export async function signInWithCredentialsAction(formData: FormData) {
     await signIn("credentials", {
       email,
       password,
-      redirectTo: "/",
+      redirectTo: "/post-login",
     });
   } catch (error) {
     if (error instanceof AuthError) {
