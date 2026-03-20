@@ -2,6 +2,7 @@ package com.nhattVim.TravelTo.auth.service;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nhattVim.TravelTo.auth.dto.AuthResponse;
+import com.nhattVim.TravelTo.auth.dto.EmailPasswordLoginRequest;
 import com.nhattVim.TravelTo.auth.dto.GoogleAuthRequest;
 import com.nhattVim.TravelTo.common.exception.BadRequestException;
 import com.nhattVim.TravelTo.config.properties.GoogleProperties;
@@ -13,6 +14,7 @@ import com.nhattVim.TravelTo.user.entity.UserRole;
 import com.nhattVim.TravelTo.user.repository.UserRepository;
 import java.util.Locale;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
@@ -23,6 +25,7 @@ public class GoogleAuthService {
   private final SecurityProperties securityProperties;
   private final GoogleProperties googleProperties;
   private final JwtService jwtService;
+  private final PasswordEncoder passwordEncoder;
   private final RestClient restClient;
 
   public GoogleAuthService(
@@ -30,11 +33,13 @@ public class GoogleAuthService {
       SecurityProperties securityProperties,
       GoogleProperties googleProperties,
       JwtService jwtService,
+      PasswordEncoder passwordEncoder,
       RestClient.Builder restClientBuilder) {
     this.userRepository = userRepository;
     this.securityProperties = securityProperties;
     this.googleProperties = googleProperties;
     this.jwtService = jwtService;
+    this.passwordEncoder = passwordEncoder;
     this.restClient = restClientBuilder.build();
   }
 
@@ -50,12 +55,41 @@ public class GoogleAuthService {
     User user = userRepository.findByEmailIgnoreCase(tokenInfo.email())
         .map(existing -> updateExistingUser(existing, tokenInfo))
         .orElseGet(() -> createUser(tokenInfo));
+    user = syncRoleByAdminEmail(user);
 
     String accessToken = jwtService.generateToken(user.getEmail());
-    return new AuthResponse(
-        accessToken,
-        new AuthResponse.UserInfo(user.getId(), user.getEmail(), user.getFullName(), user.getAvatarUrl(),
-            user.getRole().name()));
+    return toAuthResponse(user, accessToken);
+  }
+
+  public AuthResponse authenticateWithPassword(EmailPasswordLoginRequest request) {
+    String normalizedEmail = request.email().trim().toLowerCase(Locale.ROOT);
+    User user = userRepository.findByEmailIgnoreCase(normalizedEmail)
+        .orElseThrow(() -> new BadRequestException("Email hoặc mật khẩu không chính xác"));
+
+    if (user.getPasswordHash() == null || user.getPasswordHash().isBlank()) {
+      throw new BadRequestException("Tài khoản chưa thiết lập mật khẩu. Vui lòng đăng nhập Google trước");
+    }
+
+    if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
+      throw new BadRequestException("Email hoặc mật khẩu không chính xác");
+    }
+
+    user = syncRoleByAdminEmail(user);
+
+    String accessToken = jwtService.generateToken(user.getEmail());
+    return toAuthResponse(user, accessToken);
+  }
+
+  public void createPassword(String email, String rawPassword) {
+    User user = userRepository.findByEmailIgnoreCase(email)
+        .orElseThrow(() -> new BadRequestException("Không tìm thấy tài khoản để thiết lập mật khẩu"));
+
+    if (user.getPasswordHash() != null && !user.getPasswordHash().isBlank()) {
+      throw new BadRequestException("Tài khoản đã thiết lập mật khẩu trước đó");
+    }
+
+    user.setPasswordHash(passwordEncoder.encode(rawPassword));
+    userRepository.save(user);
   }
 
   private GoogleTokenInfo verifyToken(String idToken) {
@@ -98,6 +132,27 @@ public class GoogleAuthService {
     return userRepository.save(user);
   }
 
+  private AuthResponse toAuthResponse(User user, String accessToken) {
+    return new AuthResponse(
+        accessToken,
+        new AuthResponse.UserInfo(
+            user.getId(),
+            user.getEmail(),
+            user.getFullName(),
+            user.getAvatarUrl(),
+            user.getRole().name(),
+            user.getPasswordHash() != null && !user.getPasswordHash().isBlank()));
+  }
+
+  private User syncRoleByAdminEmail(User user) {
+    UserRole expectedRole = isAdminEmail(user.getEmail()) ? UserRole.ADMIN : UserRole.USER;
+    if (user.getRole() != expectedRole) {
+      user.setRole(expectedRole);
+      return userRepository.save(user);
+    }
+    return user;
+  }
+
   private String normalizeName(String name, String email) {
     if (name != null && !name.isBlank()) {
       return name.trim();
@@ -106,12 +161,13 @@ public class GoogleAuthService {
   }
 
   private boolean isAdminEmail(String email) {
-    if (securityProperties.adminEmails() == null) {
+    if (securityProperties.adminEmails() == null || email == null || email.isBlank()) {
       return false;
     }
+    String normalizedEmail = email.trim();
     return securityProperties.adminEmails().stream()
         .filter(item -> item != null && !item.isBlank())
-        .anyMatch(adminEmail -> adminEmail.equalsIgnoreCase(email));
+        .anyMatch(adminEmail -> adminEmail.trim().equalsIgnoreCase(normalizedEmail));
   }
 
   private record GoogleTokenInfo(

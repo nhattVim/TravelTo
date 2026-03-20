@@ -1,6 +1,30 @@
 import NextAuth from "next-auth";
+import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
-import { exchangeGoogleToken } from "@/lib/api/auth";
+import { exchangeGoogleToken, loginWithEmailPassword } from "@/lib/api/auth";
+import { BackendAuthResponse, UserRole } from "@/types/travel";
+
+interface SessionUserPayload {
+  id: string;
+  role: UserRole;
+  fullName: string;
+  email: string;
+  avatarUrl: string;
+  backendAccessToken: string;
+  passwordConfigured: boolean;
+}
+
+function mapBackendSession(backendSession: BackendAuthResponse): SessionUserPayload {
+  return {
+    id: String(backendSession.user.id),
+    role: backendSession.user.role,
+    fullName: backendSession.user.fullName,
+    email: backendSession.user.email,
+    avatarUrl: backendSession.user.avatarUrl,
+    backendAccessToken: backendSession.accessToken,
+    passwordConfigured: backendSession.user.passwordConfigured,
+  };
+}
 
 const authSecret =
   process.env.AUTH_SECRET ??
@@ -12,6 +36,37 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+    }),
+    Credentials({
+      name: "Email + Mật khẩu",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Mật khẩu", type: "password" },
+      },
+      async authorize(credentials) {
+        const email = typeof credentials?.email === "string" ? credentials.email.trim() : "";
+        const password = typeof credentials?.password === "string" ? credentials.password : "";
+
+        if (!email || !password) {
+          return null;
+        }
+
+        try {
+          const backendSession = await loginWithEmailPassword(email, password);
+          const payload = mapBackendSession(backendSession);
+          return {
+            id: payload.id,
+            role: payload.role,
+            name: payload.fullName,
+            email: payload.email,
+            image: payload.avatarUrl,
+            backendAccessToken: payload.backendAccessToken,
+            passwordConfigured: payload.passwordConfigured,
+          };
+        } catch {
+          return null;
+        }
+      },
     }),
   ],
   pages: {
@@ -27,16 +82,33 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return true;
     },
-    async jwt({ token, account }) {
+    async jwt({ token, account, user }) {
       if (account?.provider === "google" && account.id_token) {
         const backendSession = await exchangeGoogleToken(account.id_token);
-        token.backendAccessToken = backendSession.accessToken;
-        token.userId = String(backendSession.user.id);
-        token.role = backendSession.user.role;
-        token.name = backendSession.user.fullName;
-        token.email = backendSession.user.email;
-        token.picture = backendSession.user.avatarUrl;
+        const payload = mapBackendSession(backendSession);
+        token.backendAccessToken = payload.backendAccessToken;
+        token.userId = payload.id;
+        token.role = payload.role;
+        token.name = payload.fullName;
+        token.email = payload.email;
+        token.picture = payload.avatarUrl;
+        token.passwordConfigured = payload.passwordConfigured;
       }
+
+      if (account?.provider === "credentials") {
+        token.backendAccessToken =
+          typeof user?.backendAccessToken === "string" ? user.backendAccessToken : token.backendAccessToken;
+        token.userId = typeof user?.id === "string" ? user.id : token.userId;
+        token.role = user?.role === "ADMIN" || user?.role === "USER" ? user.role : token.role;
+        token.name = typeof user?.name === "string" ? user.name : token.name;
+        token.email = typeof user?.email === "string" ? user.email : token.email;
+        token.picture = typeof user?.image === "string" ? user.image : token.picture;
+        token.passwordConfigured =
+          typeof user?.passwordConfigured === "boolean"
+            ? user.passwordConfigured
+            : token.passwordConfigured === true;
+      }
+
       return token;
     },
     async session({ session, token }) {
@@ -48,6 +120,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (typeof token.picture === "string") {
           session.user.image = token.picture;
         }
+        session.user.passwordConfigured = token.passwordConfigured === true;
       }
       session.backendAccessToken =
         typeof token.backendAccessToken === "string" ? token.backendAccessToken : undefined;

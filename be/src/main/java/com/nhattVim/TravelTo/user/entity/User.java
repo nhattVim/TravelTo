@@ -40,6 +40,9 @@ public class User extends BaseAuditEntity {
   @Column(nullable = false, length = 80)
   private String providerUserId;
 
+  @Column(length = 255)
+  private String passwordHash;
+
   @Enumerated(EnumType.STRING)
   @Column(nullable = false, length = 30)
   private AuthProvider provider;

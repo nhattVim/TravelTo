@@ -47,5 +47,18 @@ export async function apiFetch<T>(
     throw new ApiHttpError(response.status, message, payload);
   }
 
-  return (await response.json()) as T;
+  if (response.status === 204) {
+    return undefined as T;
+  }
+
+  const raw = await response.text();
+  if (!raw) {
+    return undefined as T;
+  }
+
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    return raw as T;
+  }
 }

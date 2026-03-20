@@ -98,5 +98,6 @@ export interface BackendAuthResponse {
     fullName: string;
     avatarUrl: string;
     role: UserRole;
+    passwordConfigured: boolean;
   };
 }

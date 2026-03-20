@@ -7,6 +7,7 @@ declare module "next-auth" {
     user: DefaultSession["user"] & {
       id?: string;
       role?: UserRole;
+      passwordConfigured?: boolean;
     };
   }
 
@@ -14,6 +15,7 @@ declare module "next-auth" {
     id?: string;
     role?: UserRole;
     backendAccessToken?: string;
+    passwordConfigured?: boolean;
   }
 }
 
@@ -22,5 +24,6 @@ declare module "next-auth/jwt" {
     backendAccessToken?: string;
     role?: UserRole;
     userId?: string;
+    passwordConfigured?: boolean;
   }
 }

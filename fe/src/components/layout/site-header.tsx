@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { auth } from "@/auth";
-import { signInWithGoogleAction, signOutAction } from "@/lib/auth-actions";
+import { signOutAction } from "@/lib/auth-actions";
 
 const links = [
   { href: "/", label: "Trang chủ" },
@@ -44,14 +44,12 @@ export async function SiteHeader() {
             </form>
           </div>
         ) : (
-          <form action={signInWithGoogleAction}>
-            <button
-              type="submit"
-              className="rounded-full bg-[#0a7d59] px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-[#085a41]"
-            >
-              Đăng nhập Google
-            </button>
-          </form>
+          <Link
+            href="/login"
+            className="rounded-full bg-[#0a7d59] px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-[#085a41]"
+          >
+            Đăng nhập
+          </Link>
         )}
       </div>
     </header>

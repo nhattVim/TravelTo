@@ -2,7 +2,7 @@ spring:
     application:
         name: TravelTo
     datasource:
-        url: ${DB_URL:jdbc:h2:mem:travelto;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE}
+        url: ${DB_URL:jdbc:h2:file:./travelto;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE}
         username: ${DB_USERNAME:sa}
         password: ${DB_PASSWORD:}
         driver-class-name: ${DB_DRIVER:org.h2.Driver}
@@ -16,19 +16,20 @@ spring:
     h2:
         console:
             enabled: true
+            path: /h2-console
 
 server:
     port: ${SERVER_PORT:8080}
 
 app:
     jwt:
-        secret: ${APP_JWT_SECRET:replace-with-at-least-32-characters-secret-key}
+        secret: ${APP_JWT_SECRET:nhat-truong-dep-trai-vo-dich-vu-tru-sieu-cap-vip-pro-galaxy-ultra-plus-plus}
         expiration-minutes: ${APP_JWT_EXPIRE_MINUTES:1440}
     cors:
         allowed-origins:
             - ${FE_ORIGIN:http://localhost:3000}
     security:
         admin-emails:
-            - ${ADMIN_EMAIL:admin@travelto.vn}
+            - ${ADMIN_EMAIL:nhattruong13112000@gmail.com}
     google:
         token-info-url: https://oauth2.googleapis.com/tokeninfo
