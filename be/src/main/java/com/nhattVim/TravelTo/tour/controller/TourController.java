@@ -2,6 +2,7 @@ package com.nhattVim.TravelTo.tour.controller;
 
 import com.nhattVim.TravelTo.tour.dto.PagedResponse;
 import com.nhattVim.TravelTo.tour.dto.TourDetailResponse;
+import com.nhattVim.TravelTo.tour.dto.TourFilterOptionsResponse;
 import com.nhattVim.TravelTo.tour.dto.TourListItemResponse;
 import com.nhattVim.TravelTo.tour.service.TourService;
 import java.util.List;
@@ -24,9 +25,16 @@ public class TourController {
   @GetMapping("/tours")
   PagedResponse<TourListItemResponse> getTours(
       @RequestParam(required = false) String provinceCode,
+      @RequestParam(required = false) String departureLocation,
+      @RequestParam(required = false) String destinationLocation,
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "9") int size) {
-    return tourService.getTours(provinceCode, page, size);
+    return tourService.getTours(provinceCode, departureLocation, destinationLocation, page, size);
+  }
+
+  @GetMapping("/tours/filters")
+  TourFilterOptionsResponse getTourFilterOptions() {
+    return tourService.getTourFilterOptions();
   }
 
   @GetMapping("/tours/{id}")

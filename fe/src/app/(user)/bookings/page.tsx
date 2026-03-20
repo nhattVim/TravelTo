@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { createBookingAction } from "@/app/(user)/bookings/actions";
 import { getMyBookings } from "@/lib/api/private";
 import { getTourDetail } from "@/lib/api/public";
+import { ApiHttpError } from "@/lib/api/client";
 import { formatCurrencyVnd, formatDateVi } from "@/lib/format";
 import { redirect } from "next/navigation";
 
@@ -18,11 +19,23 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
   const resolvedSearchParams = searchParams ? await searchParams : {};
   const tourIdParam =
     typeof resolvedSearchParams.tourId === "string" ? Number(resolvedSearchParams.tourId) : undefined;
+  const departureIdParam =
+    typeof resolvedSearchParams.departureId === "string" ? Number(resolvedSearchParams.departureId) : undefined;
 
   const [bookings, selectedTour] = await Promise.all([
-    getMyBookings(session.backendAccessToken),
+    getMyBookings(session.backendAccessToken).catch((error) => {
+      if (error instanceof ApiHttpError && (error.status === 401 || error.status === 403)) {
+        redirect("/login?reason=session-expired");
+      }
+      throw error;
+    }),
     tourIdParam && !Number.isNaN(tourIdParam) ? getTourDetail(tourIdParam).catch(() => null) : Promise.resolve(null),
   ]);
+
+  const selectedDeparture =
+    selectedTour && departureIdParam && !Number.isNaN(departureIdParam)
+      ? selectedTour.departures.find((item) => item.id === departureIdParam)
+      : null;
 
   const isSuccess = resolvedSearchParams.success === "1";
 
@@ -39,21 +52,24 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
         </div>
       ) : null}
 
-      {selectedTour ? (
+      {selectedTour && selectedDeparture ? (
         <section className="rounded-3xl border border-[#cdece0] bg-white p-6 md:p-8">
           <h2 className="text-xl font-semibold text-[#0b3c2e]">Đặt tour: {selectedTour.title}</h2>
-          <p className="mt-1 text-sm text-[#2e5a4c]">{selectedTour.provinceName} · {formatCurrencyVnd(selectedTour.price)}</p>
-          <form action={createBookingAction} className="mt-5 grid gap-4 md:grid-cols-3">
+          <p className="mt-1 text-sm text-[#2e5a4c]">
+            {selectedTour.departureLocation} → {selectedTour.destinationLocation}
+          </p>
+
+          <div className="mt-5 rounded-2xl bg-[#f0fff7] p-4 text-sm text-[#215244]">
+            <p>
+              Ngày đi: {formatDateVi(selectedDeparture.departureDate)} - Ngày về: {formatDateVi(selectedDeparture.returnDate)}
+            </p>
+            <p className="mt-1">Giá theo đợt: {formatCurrencyVnd(selectedDeparture.price)} / khách</p>
+            <p className="mt-1">Còn lại: {selectedDeparture.slotsAvailable} chỗ</p>
+          </div>
+
+          <form action={createBookingAction} className="mt-5 grid gap-4 md:grid-cols-2">
             <input type="hidden" name="tourId" value={selectedTour.id} />
-            <label className="space-y-2 text-sm text-[#284f42]">
-              <span>Ngày khởi hành</span>
-              <input
-                type="date"
-                name="travelDate"
-                required
-                className="w-full rounded-xl border border-[#9fdac4] bg-white px-3 py-2 outline-none focus:border-[#0a7d59]"
-              />
-            </label>
+            <input type="hidden" name="departureId" value={selectedDeparture.id} />
             <label className="space-y-2 text-sm text-[#284f42]">
               <span>Số khách</span>
               <input
@@ -61,6 +77,7 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
                 name="guests"
                 min={1}
                 defaultValue={1}
+                max={selectedDeparture.slotsAvailable}
                 required
                 className="w-full rounded-xl border border-[#9fdac4] bg-white px-3 py-2 outline-none focus:border-[#0a7d59]"
               />
@@ -74,6 +91,10 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
               </button>
             </div>
           </form>
+        </section>
+      ) : selectedTour ? (
+        <section className="rounded-3xl border border-[#f0cf9b] bg-[#fff8ea] p-6 text-sm text-[#6c4a1e] md:p-8">
+          Bạn chưa chọn đợt khởi hành hợp lệ. Vui lòng quay lại trang chi tiết tour và chọn ngày có giá để tiếp tục đặt.
         </section>
       ) : null}
 

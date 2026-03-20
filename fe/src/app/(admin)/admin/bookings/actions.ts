@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth";
 import { updateBookingStatus } from "@/lib/api/private";
+import { ApiHttpError } from "@/lib/api/client";
 import { redirect } from "next/navigation";
 
 export async function updateBookingStatusAction(formData: FormData) {
@@ -18,6 +19,14 @@ export async function updateBookingStatusAction(formData: FormData) {
     redirect("/admin/bookings?error=invalid");
   }
 
-  await updateBookingStatus(session.backendAccessToken, id, status);
+  try {
+    await updateBookingStatus(session.backendAccessToken, id, status);
+  } catch (error) {
+    if (error instanceof ApiHttpError && (error.status === 401 || error.status === 403)) {
+      redirect("/login?reason=session-expired");
+    }
+    redirect("/admin/bookings?error=update-failed");
+  }
+
   redirect("/admin/bookings?updated=1");
 }

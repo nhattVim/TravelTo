@@ -16,9 +16,9 @@ export default function RootLayout({
   return (
     <html lang="vi">
       <body className="antialiased">
-        <div className="app-shell min-h-screen">
+        <div className="app-shell min-h-screen flex flex-col">
           <SiteHeader />
-          <main className="mx-auto w-full max-w-6xl px-5 py-8 md:px-8 md:py-10">{children}</main>
+          <main className="flex-1 mx-auto w-full max-w-6xl px-5 py-8 md:px-8 md:py-10">{children}</main>
           <SiteFooter />
         </div>
       </body>

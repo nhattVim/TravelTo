@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { updateBookingStatusAction } from "@/app/(admin)/admin/bookings/actions";
 import { getAdminBookings } from "@/lib/api/private";
+import { ApiHttpError } from "@/lib/api/client";
 import { formatCurrencyVnd, formatDateVi } from "@/lib/format";
 import { redirect } from "next/navigation";
 
@@ -10,7 +11,12 @@ export default async function AdminBookingsPage() {
     redirect("/");
   }
 
-  const bookings = await getAdminBookings(session.backendAccessToken);
+  const bookings = await getAdminBookings(session.backendAccessToken).catch((error) => {
+    if (error instanceof ApiHttpError && (error.status === 401 || error.status === 403)) {
+      redirect("/login?reason=session-expired");
+    }
+    throw error;
+  });
 
   return (
     <div className="space-y-8">

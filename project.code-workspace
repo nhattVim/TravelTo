@@ -1,3 +1,13 @@
 {
-    "folders": [{ "path": "be" }, { "path": "fe" }],
+    "folders": [
+        {
+            "path": "be",
+        },
+        {
+            "path": "fe",
+        },
+    ],
+    "settings": {
+        "java.compile.nullAnalysis.mode": "automatic",
+    },
 }

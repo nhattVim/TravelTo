@@ -25,6 +25,9 @@ export function TourCard({ tour }: TourCardProps) {
       <div className="space-y-4 p-5">
         <h3 className="line-clamp-1 text-lg font-semibold text-[#083b2d]">{tour.title}</h3>
         <p className="line-clamp-2 text-sm text-[#37584f]">{tour.summary}</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-[#1c6650]">
+          {tour.departureLocation} → {tour.destinationLocation}
+        </p>
         <div className="flex items-center justify-between text-sm text-[#1d493c]">
           <span>{tour.days} ngày · {tour.nights} đêm</span>
           <span>Còn {tour.slotsAvailable} chỗ</span>

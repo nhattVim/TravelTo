@@ -2,7 +2,9 @@ package com.nhattVim.TravelTo.tour.entity;
 
 import com.nhattVim.TravelTo.common.model.BaseAuditEntity;
 import com.nhattVim.TravelTo.province.entity.Province;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -12,8 +14,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -57,6 +62,40 @@ public class Tour extends BaseAuditEntity {
 
   @Column(length = 400)
   private String imageUrl;
+
+  @ElementCollection
+  @CollectionTable(name = "tour_images", joinColumns = @JoinColumn(name = "tour_id"))
+  @OrderColumn(name = "sort_order")
+  @Column(name = "image_url", nullable = false, length = 500)
+  @Builder.Default
+  private List<String> imageUrls = new ArrayList<>();
+
+  @Column(nullable = false, length = 120)
+  private String departureLocation;
+
+  @Column(nullable = false, length = 120)
+  private String destinationLocation;
+
+  @Column(length = 240)
+  private String attractions;
+
+  @Column(length = 240)
+  private String cuisine;
+
+  @Column(length = 240)
+  private String suitableFor;
+
+  @Column(length = 240)
+  private String idealTime;
+
+  @Column(length = 240)
+  private String transport;
+
+  @Column(length = 240)
+  private String promotion;
+
+  @Column(length = 1200)
+  private String notes;
 
   @Column(nullable = false)
   private int slotsTotal;

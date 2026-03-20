@@ -7,6 +7,18 @@ type ApiFetchOptions = RequestInit & {
   };
 };
 
+export class ApiHttpError extends Error {
+  status: number;
+  payload?: unknown;
+
+  constructor(status: number, message: string, payload?: unknown) {
+    super(message);
+    this.name = "ApiHttpError";
+    this.status = status;
+    this.payload = payload;
+  }
+}
+
 export async function apiFetch<T>(
   path: string,
   options: ApiFetchOptions = {},
@@ -20,8 +32,19 @@ export async function apiFetch<T>(
   });
 
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || "Request thất bại");
+    const raw = await response.text();
+    let payload: unknown = raw;
+    let message = raw || "Request thất bại";
+
+    try {
+      const parsed = JSON.parse(raw) as { message?: string; error?: string };
+      payload = parsed;
+      message = parsed.message || parsed.error || message;
+    } catch {
+      // Keep raw text when response is not JSON.
+    }
+
+    throw new ApiHttpError(response.status, message, payload);
   }
 
   return (await response.json()) as T;

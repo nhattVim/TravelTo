@@ -16,7 +16,7 @@ export async function getMyBookings(token: string): Promise<Booking[]> {
 
 export async function createBooking(
   token: string,
-  payload: { tourId: number; travelDate: string; guests: number },
+  payload: { tourId: number; departureId: number; guests: number },
 ): Promise<Booking> {
   return apiFetch<Booking>("/api/v1/bookings", {
     method: "POST",

@@ -1,5 +1,24 @@
 export type UserRole = "USER" | "ADMIN";
 
+export interface TourDeparture {
+  id: number;
+  departureDate: string;
+  returnDate: string;
+  price: number;
+  slotsTotal: number;
+  slotsAvailable: number;
+}
+
+export interface TourAdditionalInfo {
+  attractions: string;
+  cuisine: string;
+  suitableFor: string;
+  idealTime: string;
+  transport: string;
+  promotion: string;
+  notes: string;
+}
+
 export interface ProvinceOverview {
   id: number;
   code: string;
@@ -18,6 +37,8 @@ export interface TourItem {
   imageUrl: string;
   provinceCode: string;
   provinceName: string;
+  departureLocation: string;
+  destinationLocation: string;
   slotsAvailable: number;
 }
 
@@ -30,10 +51,20 @@ export interface TourDetail {
   days: number;
   nights: number;
   imageUrl: string;
+  imageUrls: string[];
   provinceCode: string;
   provinceName: string;
+  departureLocation: string;
+  destinationLocation: string;
   slotsAvailable: number;
   createdAt: string;
+  departures: TourDeparture[];
+  additionalInfo: TourAdditionalInfo;
+}
+
+export interface TourFilterOptions {
+  departureLocations: string[];
+  destinationLocations: string[];
 }
 
 export interface PagedResponse<T> {
@@ -47,6 +78,7 @@ export interface PagedResponse<T> {
 export interface Booking {
   id: number;
   tourId: number;
+  departureId: number | null;
   tourTitle: string;
   provinceName: string;
   travelDate: string;
