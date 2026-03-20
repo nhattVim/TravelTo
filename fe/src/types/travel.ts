@@ -1,4 +1,6 @@
 export type UserRole = "USER" | "ADMIN";
+export type TourStatus = "DRAFT" | "PUBLISHED";
+export type BookingStatus = "PENDING" | "CONFIRMED" | "CANCELLED";
 
 export interface TourDeparture {
   id: number;
@@ -10,13 +12,13 @@ export interface TourDeparture {
 }
 
 export interface TourAdditionalInfo {
-  attractions: string;
-  cuisine: string;
-  suitableFor: string;
-  idealTime: string;
-  transport: string;
-  promotion: string;
-  notes: string;
+  attractions: string | null;
+  cuisine: string | null;
+  suitableFor: string | null;
+  idealTime: string | null;
+  transport: string | null;
+  promotion: string | null;
+  notes: string | null;
 }
 
 export interface ProvinceOverview {
@@ -84,10 +86,71 @@ export interface Booking {
   travelDate: string;
   guests: number;
   totalPrice: number;
-  status: "PENDING" | "CONFIRMED" | "CANCELLED";
+  status: BookingStatus;
   createdAt: string;
   customerEmail: string;
   customerName: string;
+}
+
+export interface AdminTourListItem {
+  id: number;
+  title: string;
+  provinceCode: string;
+  provinceName: string;
+  price: number;
+  status: TourStatus;
+  days: number;
+  nights: number;
+  departureLocation: string;
+  destinationLocation: string;
+  slotsTotal: number;
+  slotsAvailable: number;
+  updatedAt: string;
+}
+
+export interface AdminTourDetail {
+  id: number;
+  title: string;
+  summary: string;
+  description: string;
+  price: number;
+  days: number;
+  nights: number;
+  imageUrl: string | null;
+  imageUrls: string[];
+  provinceCode: string;
+  provinceName: string;
+  departureLocation: string;
+  destinationLocation: string;
+  slotsTotal: number;
+  slotsAvailable: number;
+  status: TourStatus;
+  createdAt: string;
+  updatedAt: string;
+  departures: TourDeparture[];
+  additionalInfo: TourAdditionalInfo;
+}
+
+export interface AdminTourUpsertPayload {
+  provinceCode: string;
+  title: string;
+  summary: string;
+  description: string;
+  price: number;
+  days: number;
+  nights: number;
+  imageUrl: string;
+  imageUrls: string[];
+  departureLocation: string;
+  destinationLocation: string;
+  attractions: string;
+  cuisine: string;
+  suitableFor: string;
+  idealTime: string;
+  transport: string;
+  promotion: string;
+  notes: string;
+  status: TourStatus;
 }
 
 export interface BackendAuthResponse {
