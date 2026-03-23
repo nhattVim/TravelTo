@@ -1,9 +1,11 @@
 package com.nhattVim.TravelTo.tour.controller;
 
 import com.nhattVim.TravelTo.tour.dto.AdminTourDetailResponse;
+import com.nhattVim.TravelTo.tour.dto.AdminTourDepartureUpsertRequest;
 import com.nhattVim.TravelTo.tour.dto.AdminTourListItemResponse;
 import com.nhattVim.TravelTo.tour.dto.AdminTourUpsertRequest;
 import com.nhattVim.TravelTo.tour.dto.PagedResponse;
+import com.nhattVim.TravelTo.tour.dto.TourDepartureResponse;
 import com.nhattVim.TravelTo.tour.service.TourService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +54,27 @@ public class AdminTourController {
   @DeleteMapping("/{id}")
   ResponseEntity<Void> deleteTour(@PathVariable Long id) {
     tourService.deleteAdminTour(id);
+    return ResponseEntity.noContent().build();
+  }
+
+  @PostMapping("/{tourId}/departures")
+  ResponseEntity<TourDepartureResponse> createDeparture(
+      @PathVariable Long tourId,
+      @Valid @RequestBody AdminTourDepartureUpsertRequest request) {
+    return ResponseEntity.ok(tourService.createAdminTourDeparture(tourId, request));
+  }
+
+  @PutMapping("/{tourId}/departures/{departureId}")
+  TourDepartureResponse updateDeparture(
+      @PathVariable Long tourId,
+      @PathVariable Long departureId,
+      @Valid @RequestBody AdminTourDepartureUpsertRequest request) {
+    return tourService.updateAdminTourDeparture(tourId, departureId, request);
+  }
+
+  @DeleteMapping("/{tourId}/departures/{departureId}")
+  ResponseEntity<Void> deleteDeparture(@PathVariable Long tourId, @PathVariable Long departureId) {
+    tourService.deleteAdminTourDeparture(tourId, departureId);
     return ResponseEntity.noContent().build();
   }
 }

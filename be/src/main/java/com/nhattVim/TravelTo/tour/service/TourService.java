@@ -6,6 +6,7 @@ import com.nhattVim.TravelTo.common.exception.NotFoundException;
 import com.nhattVim.TravelTo.province.entity.Province;
 import com.nhattVim.TravelTo.province.repository.ProvinceRepository;
 import com.nhattVim.TravelTo.tour.dto.AdminTourDetailResponse;
+import com.nhattVim.TravelTo.tour.dto.AdminTourDepartureUpsertRequest;
 import com.nhattVim.TravelTo.tour.dto.AdminTourListItemResponse;
 import com.nhattVim.TravelTo.tour.dto.AdminTourUpsertRequest;
 import com.nhattVim.TravelTo.tour.dto.PagedResponse;
@@ -18,6 +19,7 @@ import com.nhattVim.TravelTo.tour.entity.Tour;
 import com.nhattVim.TravelTo.tour.entity.TourStatus;
 import com.nhattVim.TravelTo.tour.repository.TourDepartureRepository;
 import com.nhattVim.TravelTo.tour.repository.TourRepository;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -125,6 +127,71 @@ public class TourService {
 
     tourDepartureRepository.deleteByTour_Id(id);
     tourRepository.delete(tour);
+  }
+
+  @Transactional
+  public TourDepartureResponse createAdminTourDeparture(Long tourId, AdminTourDepartureUpsertRequest request) {
+    Tour tour = findTourOrThrow(tourId);
+    validateDepartureRequest(request);
+
+    if (tourDepartureRepository.findByTour_IdAndDepartureDate(tourId, request.departureDate()).isPresent()) {
+      throw new BadRequestException("Đợt khởi hành đã tồn tại cho ngày này");
+    }
+
+    TourDeparture departure = TourDeparture.builder()
+        .tour(tour)
+        .departureDate(request.departureDate())
+        .returnDate(request.returnDate())
+        .price(request.price())
+        .slotsTotal(request.slotsTotal())
+        .slotsAvailable(request.slotsAvailable())
+        .build();
+
+    TourDeparture saved = tourDepartureRepository.save(departure);
+    recalculateSlots(tour);
+    return toDepartureResponse(saved);
+  }
+
+  @Transactional
+  public TourDepartureResponse updateAdminTourDeparture(
+      Long tourId,
+      Long departureId,
+      AdminTourDepartureUpsertRequest request) {
+    Tour tour = findTourOrThrow(tourId);
+    TourDeparture departure = tourDepartureRepository.findByIdAndTour_Id(departureId, tourId)
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy đợt khởi hành"));
+
+    validateDepartureRequest(request);
+
+    tourDepartureRepository.findByTour_IdAndDepartureDate(tourId, request.departureDate())
+        .filter(item -> !item.getId().equals(departureId))
+        .ifPresent(item -> {
+          throw new BadRequestException("Đợt khởi hành đã tồn tại cho ngày này");
+        });
+
+    departure.setDepartureDate(request.departureDate());
+    departure.setReturnDate(request.returnDate());
+    departure.setPrice(request.price());
+    departure.setSlotsTotal(request.slotsTotal());
+    departure.setSlotsAvailable(request.slotsAvailable());
+
+    TourDeparture saved = tourDepartureRepository.save(departure);
+    recalculateSlots(tour);
+    return toDepartureResponse(saved);
+  }
+
+  @Transactional
+  public void deleteAdminTourDeparture(Long tourId, Long departureId) {
+    Tour tour = findTourOrThrow(tourId);
+    TourDeparture departure = tourDepartureRepository.findByIdAndTour_Id(departureId, tourId)
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy đợt khởi hành"));
+
+    if (bookingRepository.existsByDeparture_Id(departureId)) {
+      throw new BadRequestException("Không thể xóa đợt khởi hành đã có booking");
+    }
+
+    tourDepartureRepository.delete(departure);
+    recalculateSlots(tour);
   }
 
   @Transactional(readOnly = true)
@@ -333,5 +400,34 @@ public class TourService {
     tour.setSlotsTotal(slotsTotal);
     tour.setSlotsAvailable(Math.max(0, slotsAvailable));
     tourRepository.save(tour);
+  }
+
+  private Tour findTourOrThrow(Long tourId) {
+    return tourRepository.findById(tourId)
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy tour"));
+  }
+
+  private void validateDepartureRequest(AdminTourDepartureUpsertRequest request) {
+    if (request.returnDate().isBefore(request.departureDate())) {
+      throw new BadRequestException("Ngày về phải lớn hơn hoặc bằng ngày đi");
+    }
+
+    if (request.slotsAvailable() > request.slotsTotal()) {
+      throw new BadRequestException("slotsAvailable không được lớn hơn slotsTotal");
+    }
+
+    if (request.price().compareTo(BigDecimal.ZERO) <= 0) {
+      throw new BadRequestException("price phải lớn hơn 0");
+    }
+  }
+
+  private TourDepartureResponse toDepartureResponse(TourDeparture departure) {
+    return new TourDepartureResponse(
+        departure.getId(),
+        departure.getDepartureDate(),
+        departure.getReturnDate(),
+        departure.getPrice(),
+        departure.getSlotsTotal(),
+        departure.getSlotsAvailable());
   }
 }

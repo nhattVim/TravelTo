@@ -1,4 +1,13 @@
-import { AdminTourDetail, AdminTourListItem, AdminTourUpsertPayload, Booking, BookingStatus, PagedResponse } from "@/types/travel";
+import {
+  AdminTourDepartureUpsertPayload,
+  AdminTourDetail,
+  AdminTourListItem,
+  AdminTourUpsertPayload,
+  Booking,
+  BookingStatus,
+  PagedResponse,
+  TourDeparture,
+} from "@/types/travel";
 import { apiFetch } from "@/lib/api/client";
 
 function authHeaders(token: string) {
@@ -98,6 +107,45 @@ export async function updateAdminTour(
 
 export async function deleteAdminTour(token: string, id: number): Promise<void> {
   return apiFetch<void>(`/api/v1/admin/tours/${id}`, {
+    method: "DELETE",
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+}
+
+export async function createAdminTourDeparture(
+  token: string,
+  tourId: number,
+  payload: AdminTourDepartureUpsertPayload,
+): Promise<TourDeparture> {
+  return apiFetch<TourDeparture>(`/api/v1/admin/tours/${tourId}/departures`, {
+    method: "POST",
+    headers: authHeaders(token),
+    body: JSON.stringify(payload),
+    cache: "no-store",
+  });
+}
+
+export async function updateAdminTourDeparture(
+  token: string,
+  tourId: number,
+  departureId: number,
+  payload: AdminTourDepartureUpsertPayload,
+): Promise<TourDeparture> {
+  return apiFetch<TourDeparture>(`/api/v1/admin/tours/${tourId}/departures/${departureId}`, {
+    method: "PUT",
+    headers: authHeaders(token),
+    body: JSON.stringify(payload),
+    cache: "no-store",
+  });
+}
+
+export async function deleteAdminTourDeparture(
+  token: string,
+  tourId: number,
+  departureId: number,
+): Promise<void> {
+  return apiFetch<void>(`/api/v1/admin/tours/${tourId}/departures/${departureId}`, {
     method: "DELETE",
     headers: authHeaders(token),
     cache: "no-store",

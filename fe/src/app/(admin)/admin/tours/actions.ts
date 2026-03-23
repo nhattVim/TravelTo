@@ -2,8 +2,15 @@
 
 import { auth } from "@/auth";
 import { ApiHttpError } from "@/lib/api/client";
-import { createAdminTour, deleteAdminTour, updateAdminTour } from "@/lib/api/private";
-import { AdminTourUpsertPayload, TourStatus } from "@/types/travel";
+import {
+  createAdminTour,
+  createAdminTourDeparture,
+  deleteAdminTour,
+  deleteAdminTourDeparture,
+  updateAdminTour,
+  updateAdminTourDeparture,
+} from "@/lib/api/private";
+import { AdminTourDepartureUpsertPayload, AdminTourUpsertPayload, TourStatus } from "@/types/travel";
 import { redirect } from "next/navigation";
 
 function parseImageUrls(raw: string): string[] {
@@ -75,6 +82,35 @@ function redirectWithError(basePath: string, message: string) {
   redirect(`${basePath}${basePath.includes("?") ? "&" : "?"}error=${encoded}`);
 }
 
+function parseDeparturePayload(formData: FormData): AdminTourDepartureUpsertPayload | null {
+  const departureDate = String(formData.get("departureDate") ?? "").trim();
+  const returnDate = String(formData.get("returnDate") ?? "").trim();
+
+  const price = toNumber(formData.get("price"));
+  const slotsTotal = toNumber(formData.get("slotsTotal"));
+  const slotsAvailable = toNumber(formData.get("slotsAvailable"));
+
+  if (!departureDate || !returnDate) {
+    return null;
+  }
+
+  if (!Number.isFinite(price) || !Number.isFinite(slotsTotal) || !Number.isFinite(slotsAvailable)) {
+    return null;
+  }
+
+  if (price <= 0 || slotsTotal < 1 || slotsAvailable < 0 || slotsAvailable > slotsTotal) {
+    return null;
+  }
+
+  return {
+    departureDate,
+    returnDate,
+    price,
+    slotsTotal,
+    slotsAvailable,
+  };
+}
+
 async function requireAdminSession() {
   const session = await auth();
   const token = session?.backendAccessToken;
@@ -89,19 +125,19 @@ export async function createAdminTourAction(formData: FormData) {
 
   const payload = parseTourPayload(formData);
   if (!payload) {
-    redirect("/admin/tours?mode=create&error=invalid-form");
+    redirect("/admin/tours/new?error=invalid-form");
   }
 
   try {
     const created = await createAdminTour(token, payload);
-    redirect(`/admin/tours?tourId=${created.id}&saved=1`);
+    redirect(`/admin/tours/${created.id}?saved=1`);
   } catch (error) {
     if (error instanceof ApiHttpError && (error.status === 401 || error.status === 403)) {
       redirect("/login?reason=session-expired");
     }
 
     const message = error instanceof ApiHttpError ? error.message : "Không thể tạo tour";
-    redirectWithError("/admin/tours?mode=create", message);
+    redirectWithError("/admin/tours/new", message);
   }
 }
 
@@ -115,19 +151,19 @@ export async function updateAdminTourAction(formData: FormData) {
 
   const payload = parseTourPayload(formData);
   if (!payload) {
-    redirect(`/admin/tours?mode=edit&tourId=${tourId}&error=invalid-form`);
+    redirect(`/admin/tours/${tourId}?mode=edit&error=invalid-form`);
   }
 
   try {
     const updated = await updateAdminTour(token, tourId, payload);
-    redirect(`/admin/tours?tourId=${updated.id}&updated=1`);
+    redirect(`/admin/tours/${updated.id}?updated=1`);
   } catch (error) {
     if (error instanceof ApiHttpError && (error.status === 401 || error.status === 403)) {
       redirect("/login?reason=session-expired");
     }
 
     const message = error instanceof ApiHttpError ? error.message : "Không thể cập nhật tour";
-    redirectWithError(`/admin/tours?mode=edit&tourId=${tourId}`, message);
+    redirectWithError(`/admin/tours/${tourId}?mode=edit`, message);
   }
 }
 
@@ -149,5 +185,80 @@ export async function deleteAdminTourAction(formData: FormData) {
 
     const message = error instanceof ApiHttpError ? error.message : "Không thể xóa tour";
     redirectWithError("/admin/tours", message);
+  }
+}
+
+export async function createAdminDepartureAction(formData: FormData) {
+  const token = await requireAdminSession();
+
+  const tourId = toNumber(formData.get("tourId"));
+  if (!Number.isFinite(tourId) || tourId <= 0) {
+    redirect("/admin/tours?error=invalid-tour-id");
+  }
+
+  const payload = parseDeparturePayload(formData);
+  if (!payload) {
+    redirect(`/admin/tours/${tourId}?error=invalid-departure-form`);
+  }
+
+  try {
+    await createAdminTourDeparture(token, tourId, payload);
+    redirect(`/admin/tours/${tourId}?departureSaved=1`);
+  } catch (error) {
+    if (error instanceof ApiHttpError && (error.status === 401 || error.status === 403)) {
+      redirect("/login?reason=session-expired");
+    }
+
+    const message = error instanceof ApiHttpError ? error.message : "Không thể thêm đợt khởi hành";
+    redirectWithError(`/admin/tours/${tourId}`, message);
+  }
+}
+
+export async function updateAdminDepartureAction(formData: FormData) {
+  const token = await requireAdminSession();
+
+  const tourId = toNumber(formData.get("tourId"));
+  const departureId = toNumber(formData.get("departureId"));
+  if (!Number.isFinite(tourId) || tourId <= 0 || !Number.isFinite(departureId) || departureId <= 0) {
+    redirect("/admin/tours?error=invalid-tour-id");
+  }
+
+  const payload = parseDeparturePayload(formData);
+  if (!payload) {
+    redirect(`/admin/tours/${tourId}?error=invalid-departure-form`);
+  }
+
+  try {
+    await updateAdminTourDeparture(token, tourId, departureId, payload);
+    redirect(`/admin/tours/${tourId}?departureUpdated=1`);
+  } catch (error) {
+    if (error instanceof ApiHttpError && (error.status === 401 || error.status === 403)) {
+      redirect("/login?reason=session-expired");
+    }
+
+    const message = error instanceof ApiHttpError ? error.message : "Không thể cập nhật đợt khởi hành";
+    redirectWithError(`/admin/tours/${tourId}`, message);
+  }
+}
+
+export async function deleteAdminDepartureAction(formData: FormData) {
+  const token = await requireAdminSession();
+
+  const tourId = toNumber(formData.get("tourId"));
+  const departureId = toNumber(formData.get("departureId"));
+  if (!Number.isFinite(tourId) || tourId <= 0 || !Number.isFinite(departureId) || departureId <= 0) {
+    redirect("/admin/tours?error=invalid-tour-id");
+  }
+
+  try {
+    await deleteAdminTourDeparture(token, tourId, departureId);
+    redirect(`/admin/tours/${tourId}?departureDeleted=1`);
+  } catch (error) {
+    if (error instanceof ApiHttpError && (error.status === 401 || error.status === 403)) {
+      redirect("/login?reason=session-expired");
+    }
+
+    const message = error instanceof ApiHttpError ? error.message : "Không thể xóa đợt khởi hành";
+    redirectWithError(`/admin/tours/${tourId}`, message);
   }
 }

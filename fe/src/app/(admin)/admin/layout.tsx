@@ -15,7 +15,7 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <div className="app-shell min-h-screen">
-      <div className="mx-auto max-w-6xl px-5 py-8 md:px-8 md:py-10">
+      <div className="mx-auto max-w-7xl px-5 py-8 md:px-8 md:py-10">
         <header className="rounded-3xl border border-[#cdece0] bg-white px-5 py-4 shadow-[0_20px_45px_rgba(9,88,61,0.08)]">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -39,7 +39,7 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
           </div>
         </header>
 
-        <div className="mt-6 grid gap-5 lg:grid-cols-[270px_1fr]">
+        <div className="mt-6 grid gap-5 lg:grid-cols-[280px_1fr]">
           <AdminSidebar />
           <main className="rounded-3xl border border-[#cdece0] bg-white p-5 shadow-[0_20px_45px_rgba(9,88,61,0.08)] md:p-7">
             {children}

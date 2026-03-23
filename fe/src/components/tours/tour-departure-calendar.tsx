@@ -12,13 +12,20 @@ interface TourDepartureCalendarProps {
 
 const WEEKDAYS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
 
+type MonthFormat = "long" | "short";
+
 function toMonthKey(dateValue: string): string {
   return dateValue.slice(0, 7);
 }
 
-function monthLabel(monthKey: string): string {
+function monthLabel(monthKey: string, format: MonthFormat = "long"): string {
   const [year, month] = monthKey.split("-").map(Number);
   const value = new Date(year, month - 1, 1);
+
+  if (format === "short") {
+    return `${String(month).padStart(2, '0')}/${year}`;
+  }
+
   return new Intl.DateTimeFormat("vi-VN", { month: "long", year: "numeric" }).format(value);
 }
 
@@ -98,7 +105,7 @@ export function TourDepartureCalendar({ tourId, departures }: TourDepartureCalen
     <section className="space-y-5 rounded-3xl border border-[#ccebe0] bg-white p-6 md:p-8">
       <h2 className="text-2xl font-bold text-[#083b2d]">Lịch khởi hành</h2>
 
-      <div className="grid gap-4 lg:grid-cols-[180px_1fr]">
+      <div className="grid gap-4 lg:grid-cols-[150px_1fr]">
         <div className="rounded-2xl border border-[#dbf2e9] bg-[#f8fff9] p-3">
           <p className="px-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#0a7d59]">Chọn tháng</p>
           <div className="mt-3 flex flex-wrap gap-2 lg:flex-col">
@@ -110,12 +117,12 @@ export function TourDepartureCalendar({ tourId, departures }: TourDepartureCalen
                   setSelectedMonthKey(monthKey);
                   setSelectedDepartureId(null);
                 }}
-                className={`rounded-xl px-3 py-2 text-sm font-semibold transition ${monthKey === effectiveMonthKey
-                    ? "bg-[#0a7d59] text-white"
-                    : "border border-[#9dd6c2] bg-white text-[#0a7d59] hover:bg-[#ebfff6]"
+                className={`cursor-pointer rounded-xl px-3 py-3 text-sm font-semibold transition ${monthKey === effectiveMonthKey
+                  ? "bg-[#0a7d59] text-white"
+                  : "border border-[#9dd6c2] bg-white text-[#0a7d59] hover:bg-[#ebfff6]"
                   }`}
               >
-                {monthLabel(monthKey)}
+                {monthLabel(monthKey, "short")}
               </button>
             ))}
           </div>
@@ -158,8 +165,8 @@ export function TourDepartureCalendar({ tourId, departures }: TourDepartureCalen
                   type="button"
                   onClick={() => setSelectedDepartureId(departure.id)}
                   className={`h-16 rounded-lg border p-1 text-center transition ${isSelected
-                      ? "border-[#0a7d59] bg-[#e7fff4]"
-                      : "border-[#bde6d6] bg-white hover:border-[#0a7d59]"
+                    ? "border-[#0a7d59] bg-[#e7fff4]"
+                    : "border-[#bde6d6] bg-white hover:border-[#0a7d59]"
                     }`}
                 >
                   <p className="text-sm font-semibold text-[#184b3d]">{day}</p>

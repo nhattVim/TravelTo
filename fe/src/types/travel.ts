@@ -153,6 +153,14 @@ export interface AdminTourUpsertPayload {
   status: TourStatus;
 }
 
+export interface AdminTourDepartureUpsertPayload {
+  departureDate: string;
+  returnDate: string;
+  price: number;
+  slotsTotal: number;
+  slotsAvailable: number;
+}
+
 export interface BackendAuthResponse {
   accessToken: string;
   user: {
