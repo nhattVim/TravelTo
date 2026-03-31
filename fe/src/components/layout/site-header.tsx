@@ -28,14 +28,14 @@ export async function SiteHeader() {
 
         {session?.user ? (
           <div className="group relative">
-            <div className="flex cursor-pointer items-center gap-3 py-2">
+            <Link href="/profile" className="flex cursor-pointer items-center gap-3 py-2">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0a7d59] font-bold text-white shadow-sm ring-2 ring-[#e4fff4] transition group-hover:ring-[#0a7d59]">
                 {session.user.name?.charAt(0)?.toUpperCase()}
               </div>
               <span className="hidden text-sm font-semibold text-[#1c4d3f] transition group-hover:text-[#0a7d59] md:block">
                 {session.user.name}
               </span>
-            </div>
+            </Link>
 
             <div className="absolute right-0 top-[100%] hidden w-52 flex-col overflow-hidden rounded-2xl border border-[#cdece0] bg-white p-2 shadow-[0_12px_24px_rgba(10,125,89,0.1)] group-hover:flex">
               <Link

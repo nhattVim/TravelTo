@@ -64,9 +64,9 @@ export function PasswordForm({ token }: { token: string }) {
         </div>
       )}
 
-      <div className="space-y-5 max-w-xl">
-        <div className="space-y-2">
-          <label className="text-sm font-semibold text-[#083b2d]">Mật khẩu cũ</label>
+      <div className="space-y-6 max-w-xl">
+        <div className="border-b border-[#eafbf3] pb-2">
+          <label className="text-xs md:text-sm font-semibold uppercase tracking-wider text-[#355a4d]">Mật khẩu cũ</label>
           <input
             type="password"
             value={formData.oldPassword}
@@ -74,13 +74,13 @@ export function PasswordForm({ token }: { token: string }) {
             required
             disabled={loading}
             placeholder="Nhập mật khẩu cũ"
-            className="w-full rounded-2xl border border-[#cdece0] bg-[#fcfdfd] px-4 py-3 text-[#083b2d] shadow-sm transition focus:border-[#0a7d59] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0a7d59]"
+            className="w-full border-0 bg-transparent px-0 py-2 text-base font-medium text-[#083b2d] transition focus:border-[#0a7d59] focus:outline-none focus:ring-0"
           />
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2">
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-[#083b2d]">Mật khẩu mới</label>
+        <div className="grid gap-x-8 gap-y-6 md:grid-cols-2">
+          <div className="border-b border-[#eafbf3] pb-2">
+            <label className="text-xs md:text-sm font-semibold uppercase tracking-wider text-[#355a4d]">Mật khẩu mới</label>
             <input
               type="password"
               value={formData.newPassword}
@@ -88,11 +88,11 @@ export function PasswordForm({ token }: { token: string }) {
               required
               disabled={loading}
               placeholder="Nhập mật khẩu mới"
-              className="w-full rounded-2xl border border-[#cdece0] bg-[#fcfdfd] px-4 py-3 text-[#083b2d] shadow-sm transition focus:border-[#0a7d59] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0a7d59]"
+              className="w-full border-0 bg-transparent px-0 py-2 text-base font-medium text-[#083b2d] transition focus:border-[#0a7d59] focus:outline-none focus:ring-0"
             />
           </div>
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-[#083b2d]">Nhập lại mật khẩu mới</label>
+          <div className="border-b border-[#eafbf3] pb-2">
+            <label className="text-xs md:text-sm font-semibold uppercase tracking-wider text-[#355a4d]">Nhập lại mật khẩu mới</label>
             <input
               type="password"
               value={formData.confirmPassword}
@@ -100,7 +100,7 @@ export function PasswordForm({ token }: { token: string }) {
               required
               disabled={loading}
               placeholder="Nhập lại mật khẩu mới"
-              className="w-full rounded-2xl border border-[#cdece0] bg-[#fcfdfd] px-4 py-3 text-[#083b2d] shadow-sm transition focus:border-[#0a7d59] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0a7d59]"
+              className="w-full border-0 bg-transparent px-0 py-2 text-base md:text-lg font-medium text-[#083b2d] transition focus:border-[#0a7d59] focus:outline-none focus:ring-0"
             />
           </div>
         </div>

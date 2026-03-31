@@ -69,26 +69,26 @@ export function ProfileForm({
         </div>
       )}
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <div className="space-y-2">
-          <label className="text-sm font-semibold text-[#083b2d]">Họ và tên</label>
+      <div className="grid gap-x-10 gap-y-6 md:grid-cols-2 xl:w-5/6">
+        <div className="border-b border-[#eafbf3] pb-2">
+          <label className="text-xs md:text-sm font-semibold uppercase tracking-wider text-[#355a4d]">Họ và tên</label>
           <input
             type="text"
             value={formData.fullName}
             onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
             required
             disabled={loading}
-            className="w-full rounded-2xl border border-[#cdece0] bg-[#fcfdfd] px-4 py-3 text-[#083b2d] shadow-sm transition focus:border-[#0a7d59] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0a7d59]"
+            className="w-full border-0 bg-transparent px-0 py-2 text-base font-medium text-[#083b2d] transition focus:border-[#0a7d59] focus:outline-none focus:ring-0"
           />
         </div>
 
-        <div className="space-y-2">
-          <label className="text-sm font-semibold text-[#083b2d]">Giới tính</label>
+        <div className="border-b border-[#eafbf3] pb-2">
+          <label className="text-xs md:text-sm font-semibold uppercase tracking-wider text-[#355a4d]">Giới tính</label>
           <select
             value={formData.gender}
             onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
             disabled={loading}
-            className="w-full rounded-2xl border border-[#cdece0] bg-[#fcfdfd] px-4 py-3 text-[#083b2d] shadow-sm transition focus:border-[#0a7d59] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0a7d59]"
+            className="w-full border-0 bg-transparent px-0 py-2 text-base font-medium text-[#083b2d] transition focus:border-[#0a7d59] focus:outline-none focus:ring-0"
           >
             <option value="">Chưa cập nhật</option>
             <option value="Nam">Nam</option>
@@ -97,60 +97,60 @@ export function ProfileForm({
           </select>
         </div>
 
-        <div className="space-y-2">
-          <label className="text-sm font-semibold text-[#083b2d]">Ngày sinh</label>
+        <div className="border-b border-[#eafbf3] pb-2">
+          <label className="text-xs md:text-sm font-semibold uppercase tracking-wider text-[#355a4d]">Ngày sinh</label>
           <input
             type="date"
             value={formData.dateOfBirth}
             onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
             disabled={loading}
-            className="w-full rounded-2xl border border-[#cdece0] bg-[#fcfdfd] px-4 py-3 text-[#083b2d] shadow-sm transition focus:border-[#0a7d59] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0a7d59]"
+            className="w-full border-0 bg-transparent px-0 py-2 text-base font-medium text-[#083b2d] transition focus:border-[#0a7d59] focus:outline-none focus:ring-0"
           />
         </div>
 
-        <div className="space-y-2">
-          <label className="text-sm font-semibold text-[#083b2d]">Số điện thoại</label>
+        <div className="border-b border-[#eafbf3] pb-2">
+          <label className="text-xs md:text-sm font-semibold uppercase tracking-wider text-[#355a4d]">Số điện thoại</label>
           <input
             type="text"
             value={formData.phone}
             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
             disabled={loading}
-            placeholder="Ví dụ: 0987654321"
-            className="w-full rounded-2xl border border-[#cdece0] bg-[#fcfdfd] px-4 py-3 text-[#083b2d] shadow-sm transition focus:border-[#0a7d59] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0a7d59]"
+            placeholder="Chưa cập nhật..."
+            className="w-full border-0 bg-transparent px-0 py-2 text-base font-medium text-[#083b2d] transition focus:border-[#0a7d59] focus:outline-none focus:ring-0"
           />
         </div>
 
-        <div className="space-y-2">
-          <label className="text-sm font-semibold text-[#083b2d]">Email đăng nhập</label>
+        <div className="border-b border-[#eafbf3] pb-2">
+          <label className="text-xs md:text-sm font-semibold uppercase tracking-wider text-[#355a4d]">Email</label>
           <input
             type="email"
             value={initialProfile.email}
             disabled
-            className="w-full cursor-not-allowed rounded-2xl border border-[#cdece0] bg-[#f2fdf8] px-4 py-3 text-[#355a4d] opacity-70 shadow-sm"
+            className="w-full border-0 bg-transparent px-0 py-2 text-base font-medium text-[#355a4d] opacity-80 cursor-not-allowed focus:outline-none focus:ring-0"
           />
         </div>
 
-        <div className="space-y-2">
-          <label className="text-sm font-semibold text-[#083b2d]">Căn cước công dân / CMND</label>
+        <div className="border-b border-[#eafbf3] pb-2">
+          <label className="text-xs md:text-sm font-semibold uppercase tracking-wider text-[#355a4d]">CMND / CCCD</label>
           <input
             type="text"
             value={formData.identityCard}
             onChange={(e) => setFormData({ ...formData, identityCard: e.target.value })}
             disabled={loading}
-            placeholder="Số thẻ căn cước"
-            className="w-full rounded-2xl border border-[#cdece0] bg-[#fcfdfd] px-4 py-3 text-[#083b2d] shadow-sm transition focus:border-[#0a7d59] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0a7d59]"
+            placeholder="Chưa cập nhật..."
+            className="w-full border-0 bg-transparent px-0 py-2 text-base font-medium text-[#083b2d] transition focus:border-[#0a7d59] focus:outline-none focus:ring-0"
           />
         </div>
 
-        <div className="space-y-2 md:col-span-2">
-          <label className="text-sm font-semibold text-[#083b2d]">Địa chỉ</label>
-          <textarea
+        <div className="border-b border-[#eafbf3] pb-2 md:col-span-2">
+          <label className="text-xs md:text-sm font-semibold uppercase tracking-wider text-[#355a4d]">Địa chỉ</label>
+          <input
+            type="text"
             value={formData.address}
             onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-            rows={2}
             disabled={loading}
-            placeholder="Số nhà, đường, quận/huyện..."
-            className="w-full rounded-2xl border border-[#cdece0] bg-[#fcfdfd] px-4 py-3 text-[#083b2d] shadow-sm transition focus:border-[#0a7d59] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0a7d59]"
+            placeholder="Chưa cập nhật..."
+            className="w-full border-0 bg-transparent px-0 py-2 text-base md:text-lg font-medium text-[#083b2d] transition focus:border-[#0a7d59] focus:outline-none focus:ring-0"
           />
         </div>
       </div>

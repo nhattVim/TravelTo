@@ -3,7 +3,6 @@ package com.nhattVim.TravelTo.tour.service;
 import com.nhattVim.TravelTo.booking.repository.BookingRepository;
 import com.nhattVim.TravelTo.common.exception.BadRequestException;
 import com.nhattVim.TravelTo.common.exception.NotFoundException;
-import com.nhattVim.TravelTo.common.exception.NotFoundException;
 import com.nhattVim.TravelTo.tour.dto.AdminTourDetailResponse;
 import com.nhattVim.TravelTo.tour.dto.AdminTourDepartureUpsertRequest;
 import com.nhattVim.TravelTo.tour.dto.AdminTourListItemResponse;
@@ -34,6 +33,7 @@ public class TourService {
   private final TourRepository tourRepository;
   private final TourDepartureRepository tourDepartureRepository;
   private final BookingRepository bookingRepository;
+
   public TourService(
       TourRepository tourRepository,
       TourDepartureRepository tourDepartureRepository,
@@ -333,7 +333,9 @@ public class TourService {
     List<String> normalizedImageUrls = normalizeImageUrls(request.imageUrls());
 
     tour.setProvinceCode(request.provinceCode().trim().toLowerCase());
-    tour.setProvinceName(request.provinceName() != null && !request.provinceName().isBlank() ? request.provinceName().trim() : request.provinceCode().trim());
+    tour.setProvinceName(
+        request.provinceName() != null && !request.provinceName().isBlank() ? request.provinceName().trim()
+            : request.provinceCode().trim());
     tour.setTitle(request.title().trim());
     tour.setSummary(request.summary().trim());
     tour.setDescription(request.description().trim());

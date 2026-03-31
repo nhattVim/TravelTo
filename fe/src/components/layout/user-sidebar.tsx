@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOutAction } from "@/lib/auth-actions";
 
 interface UserSidebarProps {
   user: {
@@ -44,14 +43,6 @@ export function UserSidebar({ user }: UserSidebarProps) {
         >
           Đổi mật khẩu
         </Link>
-        <form action={signOutAction}>
-          <button 
-            type="submit" 
-            className="w-full rounded-2xl px-4 py-3 text-left text-sm font-medium text-[#26584a] transition hover:bg-[#f2fdf8] hover:text-[#0a7d59]"
-          >
-            Đăng xuất
-          </button>
-        </form>
         <Link 
           href="/profile/delete" 
           className={`rounded-2xl px-4 py-3 text-sm transition ${isActive("/profile/delete") ? "bg-[#fff5f5] text-[#d14f4f] font-bold" : "font-medium text-[#d14f4f] hover:bg-[#fff5f5]"}`}
