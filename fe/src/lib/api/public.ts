@@ -1,15 +1,5 @@
-import { PagedResponse, ProvinceOverview, TourDetail, TourFilterOptions, TourItem } from "@/types/travel";
+import { PagedResponse, TourDetail, TourFilterOptions, TourItem } from "@/types/travel";
 import { apiFetch } from "@/lib/api/client";
-
-export async function getProvinceOverview(): Promise<ProvinceOverview[]> {
-  try {
-    return await apiFetch<ProvinceOverview[]>("/api/v1/provinces/overview", {
-      next: { revalidate: 120 },
-    });
-  } catch {
-    return [];
-  }
-}
 
 export async function getHighlights(): Promise<TourItem[]> {
   try {

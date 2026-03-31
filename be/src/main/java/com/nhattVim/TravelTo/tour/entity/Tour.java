@@ -1,7 +1,7 @@
 package com.nhattVim.TravelTo.tour.entity;
 
 import com.nhattVim.TravelTo.common.model.BaseAuditEntity;
-import com.nhattVim.TravelTo.province.entity.Province;
+
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -38,9 +38,11 @@ public class Tour extends BaseAuditEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "province_id", nullable = false)
-  private Province province;
+  @Column(name = "province_code", nullable = false)
+  private String provinceCode;
+
+  @Column(name = "province_name", nullable = false)
+  private String provinceName;
 
   @Column(nullable = false, length = 180)
   private String title;

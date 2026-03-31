@@ -42,7 +42,7 @@ public class SecurityConfig {
             .requestMatchers("/api/v1/provinces/**", "/api/v1/tours/**", "/api/v1/home/**")
             .permitAll()
             .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-            .requestMatchers("/api/v1/bookings/**").authenticated()
+            .requestMatchers("/api/v1/bookings/**", "/api/v1/users/**", "/api/v1/wishlists/**").authenticated()
             .anyRequest().permitAll())
         .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

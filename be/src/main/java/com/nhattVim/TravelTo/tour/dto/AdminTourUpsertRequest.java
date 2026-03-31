@@ -10,6 +10,7 @@ import java.util.List;
 
 public record AdminTourUpsertRequest(
     @NotBlank(message = "provinceCode không được để trống") String provinceCode,
+    @NotBlank(message = "provinceName không được để trống") String provinceName,
     @NotBlank(message = "title không được để trống") String title,
     @NotBlank(message = "summary không được để trống") String summary,
     @NotBlank(message = "description không được để trống") String description,

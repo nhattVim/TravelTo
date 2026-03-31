@@ -16,14 +16,19 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
   const destination =
     typeof resolvedSearchParams.destination === "string" ? resolvedSearchParams.destination : undefined;
 
-  const [tourData, filterOptions] = await Promise.all([
+  const [tourData, rawProvinces] = await Promise.all([
     getTours({
       provinceCode: province,
       departureLocation: departure,
       destinationLocation: destination,
     }),
-    getTourFilterOptions(),
+    fetch("https://provinces.open-api.vn/api/v2/p/").then((r) => r.json()),
   ]);
+
+  const provinces = rawProvinces.map((p: { codename: string; name: string }) => ({
+    code: p.codename,
+    name: p.name,
+  }));
 
   return (
     <div className="space-y-8">
@@ -45,25 +50,24 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
                 className="w-full rounded-xl border border-[#98d9c1] bg-white px-3 py-2 text-sm outline-none focus:border-[#0a7d59]"
               >
                 <option value="">Tất cả</option>
-                {filterOptions.departureLocations.map((item) => (
-                  <option key={item} value={item}>
-                    {item}
+                {provinces.map((p: { code: string; name: string }) => (
+                  <option key={p.code} value={p.name}>
+                    {p.name}
                   </option>
                 ))}
               </select>
             </label>
-
             <label className="block space-y-2 text-sm text-[#2f5b4d]">
               <span className="font-medium">Điểm đến</span>
               <select
                 name="destination"
-                defaultValue={destination ?? ""}
+                defaultValue={destination ?? (province ? (provinces.find((p: { code: string; name: string }) => p.code === province)?.name ?? "") : "")}
                 className="w-full rounded-xl border border-[#98d9c1] bg-white px-3 py-2 text-sm outline-none focus:border-[#0a7d59]"
               >
                 <option value="">Tất cả</option>
-                {filterOptions.destinationLocations.map((item) => (
-                  <option key={item} value={item}>
-                    {item}
+                {provinces.map((p: { code: string; name: string }) => (
+                  <option key={p.code} value={p.name}>
+                    {p.name}
                   </option>
                 ))}
               </select>

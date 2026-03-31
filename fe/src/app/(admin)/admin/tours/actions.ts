@@ -29,7 +29,9 @@ function toNumber(value: FormDataEntryValue | null): number {
 }
 
 function parseTourPayload(formData: FormData): AdminTourUpsertPayload | null {
-  const provinceCode = String(formData.get("provinceCode") ?? "").trim();
+  const provinceDataRaw = String(formData.get("provinceData") ?? "").trim();
+  const [provinceCode, ...nameParts] = provinceDataRaw.split("|");
+  const provinceName = nameParts.join("|") || provinceCode;
   const title = String(formData.get("title") ?? "").trim();
   const summary = String(formData.get("summary") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
@@ -56,6 +58,7 @@ function parseTourPayload(formData: FormData): AdminTourUpsertPayload | null {
 
   return {
     provinceCode,
+    provinceName,
     title,
     summary,
     description,

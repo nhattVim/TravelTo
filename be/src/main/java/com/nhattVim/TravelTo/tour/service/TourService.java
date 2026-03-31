@@ -3,8 +3,7 @@ package com.nhattVim.TravelTo.tour.service;
 import com.nhattVim.TravelTo.booking.repository.BookingRepository;
 import com.nhattVim.TravelTo.common.exception.BadRequestException;
 import com.nhattVim.TravelTo.common.exception.NotFoundException;
-import com.nhattVim.TravelTo.province.entity.Province;
-import com.nhattVim.TravelTo.province.repository.ProvinceRepository;
+import com.nhattVim.TravelTo.common.exception.NotFoundException;
 import com.nhattVim.TravelTo.tour.dto.AdminTourDetailResponse;
 import com.nhattVim.TravelTo.tour.dto.AdminTourDepartureUpsertRequest;
 import com.nhattVim.TravelTo.tour.dto.AdminTourListItemResponse;
@@ -34,17 +33,13 @@ public class TourService {
 
   private final TourRepository tourRepository;
   private final TourDepartureRepository tourDepartureRepository;
-  private final ProvinceRepository provinceRepository;
   private final BookingRepository bookingRepository;
-
   public TourService(
       TourRepository tourRepository,
       TourDepartureRepository tourDepartureRepository,
-      ProvinceRepository provinceRepository,
       BookingRepository bookingRepository) {
     this.tourRepository = tourRepository;
     this.tourDepartureRepository = tourDepartureRepository;
-    this.provinceRepository = provinceRepository;
     this.bookingRepository = bookingRepository;
   }
 
@@ -217,8 +212,8 @@ public class TourService {
         tour.getDays(),
         tour.getNights(),
         tour.getImageUrl(),
-        tour.getProvince().getCode(),
-        tour.getProvince().getName(),
+        tour.getProvinceCode(),
+        tour.getProvinceName(),
         tour.getDepartureLocation(),
         tour.getDestinationLocation(),
         tour.getSlotsAvailable());
@@ -228,8 +223,8 @@ public class TourService {
     return new AdminTourListItemResponse(
         tour.getId(),
         tour.getTitle(),
-        tour.getProvince().getCode(),
-        tour.getProvince().getName(),
+        tour.getProvinceCode(),
+        tour.getProvinceName(),
         tour.getPrice(),
         tour.getStatus().name(),
         tour.getDays(),
@@ -269,8 +264,8 @@ public class TourService {
         tour.getNights(),
         tour.getImageUrl(),
         imageUrls,
-        tour.getProvince().getCode(),
-        tour.getProvince().getName(),
+        tour.getProvinceCode(),
+        tour.getProvinceName(),
         tour.getDepartureLocation(),
         tour.getDestinationLocation(),
         tour.getSlotsAvailable(),
@@ -314,8 +309,8 @@ public class TourService {
         tour.getNights(),
         tour.getImageUrl(),
         imageUrls,
-        tour.getProvince().getCode(),
-        tour.getProvince().getName(),
+        tour.getProvinceCode(),
+        tour.getProvinceName(),
         tour.getDepartureLocation(),
         tour.getDestinationLocation(),
         tour.getSlotsTotal(),
@@ -335,12 +330,10 @@ public class TourService {
   }
 
   private void applyUpsert(Tour tour, AdminTourUpsertRequest request) {
-    Province province = provinceRepository.findByCodeIgnoreCase(request.provinceCode().trim())
-        .orElseThrow(() -> new NotFoundException("Không tìm thấy tỉnh/thành phù hợp"));
-
     List<String> normalizedImageUrls = normalizeImageUrls(request.imageUrls());
 
-    tour.setProvince(province);
+    tour.setProvinceCode(request.provinceCode().trim().toLowerCase());
+    tour.setProvinceName(request.provinceName() != null && !request.provinceName().isBlank() ? request.provinceName().trim() : request.provinceCode().trim());
     tour.setTitle(request.title().trim());
     tour.setSummary(request.summary().trim());
     tour.setDescription(request.description().trim());

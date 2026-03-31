@@ -21,14 +21,6 @@ export interface TourAdditionalInfo {
   notes: string | null;
 }
 
-export interface ProvinceOverview {
-  id: number;
-  code: string;
-  name: string;
-  coverImageUrl: string;
-  tourCount: number;
-}
-
 export interface TourItem {
   id: number;
   title: string;
@@ -133,6 +125,7 @@ export interface AdminTourDetail {
 
 export interface AdminTourUpsertPayload {
   provinceCode: string;
+  provinceName: string;
   title: string;
   summary: string;
   description: string;
@@ -171,4 +164,47 @@ export interface BackendAuthResponse {
     role: UserRole;
     passwordConfigured: boolean;
   };
+}
+
+export interface UserProfileDto {
+  id: number;
+  email: string;
+  fullName: string;
+  phone: string | null;
+  address: string | null;
+  avatarUrl: string | null;
+  provider: string;
+  role: UserRole;
+}
+
+export interface UserProfileUpdateRequest {
+  fullName: string;
+  phone: string;
+  address: string;
+  avatarUrl: string;
+}
+
+export interface UserDto {
+  id: number;
+  email: string;
+  fullName: string;
+  phone: string | null;
+  address: string | null;
+  avatarUrl: string | null;
+  provider: string;
+  role: UserRole;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UserStatusUpdateRequest {
+  role: UserRole;
+}
+
+export interface WishlistDto {
+  id: number;
+  tourId: number;
+  tourTitle: string;
+  tourPrice: number;
+  tourImageUrl: string;
 }

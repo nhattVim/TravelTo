@@ -7,6 +7,11 @@ import {
   BookingStatus,
   PagedResponse,
   TourDeparture,
+  UserDto,
+  UserProfileDto,
+  UserProfileUpdateRequest,
+  UserRole,
+  WishlistDto,
 } from "@/types/travel";
 import { apiFetch } from "@/lib/api/client";
 
@@ -147,6 +152,94 @@ export async function deleteAdminTourDeparture(
 ): Promise<void> {
   return apiFetch<void>(`/api/v1/admin/tours/${tourId}/departures/${departureId}`, {
     method: "DELETE",
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+}
+
+// User Profile
+export async function getUserProfile(token: string): Promise<UserProfileDto> {
+  return apiFetch<UserProfileDto>("/api/v1/users/me", {
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+}
+
+export async function updateUserProfile(
+  token: string,
+  payload: UserProfileUpdateRequest,
+): Promise<UserProfileDto> {
+  return apiFetch<UserProfileDto>("/api/v1/users/me", {
+    method: "PUT",
+    headers: authHeaders(token),
+    body: JSON.stringify(payload),
+    cache: "no-store",
+  });
+}
+
+// Admin Users
+export async function getAdminUsers(
+  token: string,
+  params?: { page?: number; size?: number },
+): Promise<PagedResponse<UserDto>> {
+  const searchParams = new URLSearchParams();
+  if (typeof params?.page === "number") searchParams.set("page", String(params.page));
+  if (typeof params?.size === "number") searchParams.set("size", String(params.size));
+  const query = searchParams.toString();
+  const path = query ? `/api/v1/admin/users?${query}` : "/api/v1/admin/users";
+  return apiFetch<PagedResponse<UserDto>>(path, {
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+}
+
+export async function updateAdminUserRole(
+  token: string,
+  id: number,
+  role: UserRole,
+): Promise<UserDto> {
+  return apiFetch<UserDto>(`/api/v1/admin/users/${id}/role`, {
+    method: "PATCH",
+    headers: authHeaders(token),
+    body: JSON.stringify({ role }),
+    cache: "no-store",
+  });
+}
+
+// Wishlists
+export async function getMyWishlists(
+  token: string,
+  params?: { page?: number; size?: number },
+): Promise<PagedResponse<WishlistDto>> {
+  const searchParams = new URLSearchParams();
+  if (typeof params?.page === "number") searchParams.set("page", String(params.page));
+  if (typeof params?.size === "number") searchParams.set("size", String(params.size));
+  const query = searchParams.toString();
+  const path = query ? `/api/v1/wishlists?${query}` : "/api/v1/wishlists";
+  return apiFetch<PagedResponse<WishlistDto>>(path, {
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+}
+
+export async function addWishlist(token: string, tourId: number): Promise<void> {
+  return apiFetch<void>(`/api/v1/wishlists/tours/${tourId}`, {
+    method: "POST",
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+}
+
+export async function removeWishlist(token: string, tourId: number): Promise<void> {
+  return apiFetch<void>(`/api/v1/wishlists/tours/${tourId}`, {
+    method: "DELETE",
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+}
+
+export async function checkWishlistStatus(token: string, tourId: number): Promise<{ isWished: boolean }> {
+  return apiFetch<{ isWished: boolean }>(`/api/v1/wishlists/tours/${tourId}/status`, {
     headers: authHeaders(token),
     cache: "no-store",
   });

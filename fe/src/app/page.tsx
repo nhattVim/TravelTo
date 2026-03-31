@@ -1,27 +1,18 @@
 import Link from "next/link";
 import { HeroBanner } from "@/components/home/hero-banner";
-import { ProvinceGrid } from "@/components/home/province-grid";
+
 import { SectionTitle } from "@/components/shared/section-title";
 import { SiteShell } from "@/components/layout/site-shell";
 import { TourCard } from "@/components/tours/tour-card";
-import { getHighlights, getProvinceOverview } from "@/lib/api/public";
+import { getHighlights } from "@/lib/api/public";
 
 export default async function HomePage() {
-  const [provinces, highlights] = await Promise.all([getProvinceOverview(), getHighlights()]);
+  const highlights = await getHighlights();
 
   return (
     <SiteShell>
       <div className="space-y-14 md:space-y-20">
         <HeroBanner />
-
-        <section className="space-y-6">
-          <SectionTitle
-            eyebrow="Theo Tỉnh Thành"
-            title="Bạn muốn đi đâu ở Việt Nam?"
-            subtitle="Mỗi tỉnh thành là một vibe du lịch khác nhau. Chọn địa điểm và xem ngay các tour đang mở bán."
-          />
-          <ProvinceGrid provinces={provinces} />
-        </section>
 
         <section className="space-y-6">
           <div className="flex flex-wrap items-end justify-between gap-3">

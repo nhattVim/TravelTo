@@ -1,6 +1,5 @@
 package com.nhattVim.TravelTo.tour.repository;
 
-import com.nhattVim.TravelTo.province.entity.Province;
 import com.nhattVim.TravelTo.tour.entity.Tour;
 import com.nhattVim.TravelTo.tour.entity.TourStatus;
 import java.util.List;
@@ -16,7 +15,7 @@ public interface TourRepository extends JpaRepository<Tour, Long> {
       SELECT t
       FROM Tour t
       WHERE t.status = :status
-        AND (:provinceCode IS NULL OR :provinceCode = '' OR LOWER(t.province.code) = LOWER(:provinceCode))
+        AND (:provinceCode IS NULL OR :provinceCode = '' OR LOWER(t.provinceCode) = LOWER(:provinceCode))
         AND (:departureLocation IS NULL OR :departureLocation = '' OR LOWER(t.departureLocation) = LOWER(:departureLocation))
         AND (:destinationLocation IS NULL OR :destinationLocation = '' OR LOWER(t.destinationLocation) = LOWER(:destinationLocation))
       """)
@@ -29,9 +28,9 @@ public interface TourRepository extends JpaRepository<Tour, Long> {
 
   Page<Tour> findByStatus(TourStatus status, Pageable pageable);
 
-  Page<Tour> findByStatusAndProvince_CodeIgnoreCase(TourStatus status, String provinceCode, Pageable pageable);
+  Page<Tour> findByStatusAndProvinceCodeIgnoreCase(TourStatus status, String provinceCode, Pageable pageable);
 
-  long countByProvinceAndStatus(Province province, TourStatus status);
+  long countByProvinceCodeIgnoreCaseAndStatus(String provinceCode, TourStatus status);
 
   List<Tour> findTop6ByStatusOrderByCreatedAtDesc(TourStatus status);
 

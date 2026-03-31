@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { createAdminTourAction } from "@/app/(admin)/admin/tours/actions";
-import { getProvinceOverview } from "@/lib/api/public";
+
 
 interface AdminTourNewPageProps {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -35,7 +35,9 @@ export default async function AdminTourNewPage({ searchParams }: AdminTourNewPag
 
   const params = searchParams ? await searchParams : {};
   const feedback = feedbackText(params);
-  const provinces = await getProvinceOverview();
+  const provincesRes = await fetch("https://provinces.open-api.vn/api/v2/p/");
+  const rawProvinces: { name: string; codename: string; code: number }[] = await provincesRes.json();
+  const provinces = rawProvinces.map(p => ({ code: p.codename, name: p.name }));
 
   return (
     <div className="space-y-6">
@@ -61,10 +63,10 @@ export default async function AdminTourNewPage({ searchParams }: AdminTourNewPag
         <div className="grid gap-4 md:grid-cols-2">
           <label className="space-y-1 text-sm text-[#355a4d]">
             Tỉnh / Thành
-            <select name="provinceCode" required className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]">
+            <select name="provinceData" required className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]">
               <option value="">Chọn tỉnh thành</option>
               {provinces.map((province) => (
-                <option key={province.code} value={province.code}>
+                <option key={province.code} value={`${province.code}|${province.name}`}>
                   {province.name} ({province.code})
                 </option>
               ))}
@@ -112,12 +114,26 @@ export default async function AdminTourNewPage({ searchParams }: AdminTourNewPag
 
           <label className="space-y-1 text-sm text-[#355a4d]">
             Điểm khởi hành
-            <input name="departureLocation" required className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]" />
+            <select name="departureLocation" required className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]">
+              <option value="">Chọn điểm khởi hành</option>
+              {provinces.map((p) => (
+                <option key={`dep-${p.code}`} value={p.name}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
           </label>
 
           <label className="space-y-1 text-sm text-[#355a4d]">
             Điểm đến
-            <input name="destinationLocation" required className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]" />
+            <select name="destinationLocation" required className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]">
+              <option value="">Chọn điểm đến</option>
+              {provinces.map((p) => (
+                <option key={`dest-${p.code}`} value={p.name}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
           </label>
 
           <label className="space-y-1 text-sm text-[#355a4d] md:col-span-2">

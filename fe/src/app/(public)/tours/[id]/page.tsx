@@ -4,6 +4,9 @@ import { formatCurrencyVnd } from "@/lib/format";
 import { getTourDetail } from "@/lib/api/public";
 import { TourDepartureCalendar } from "@/components/tours/tour-departure-calendar";
 import { TourImageSlider } from "@/components/tours/tour-image-slider";
+import { auth } from "@/auth";
+import { checkWishlistStatus } from "@/lib/api/private";
+import { FavoriteButton } from "@/components/tours/favorite-button";
 
 interface TourDetailPageProps {
   params: Promise<{ id: string }>;
@@ -31,6 +34,15 @@ export default async function TourDetailPage({ params }: TourDetailPageProps) {
     promotion: "",
     notes: "",
   };
+
+  const session = await auth();
+  const token = session?.backendAccessToken;
+  
+  let isWished = false;
+  if (token) {
+    const status = await checkWishlistStatus(token, numericId).catch(() => ({ isWished: false }));
+    isWished = status.isWished;
+  }
 
   const galleryImages = tour.imageUrls?.length > 0 ? tour.imageUrls : [tour.imageUrl];
 
@@ -72,6 +84,12 @@ export default async function TourDetailPage({ params }: TourDetailPageProps) {
           >
             Chọn ngày khởi hành
           </a>
+          
+          <FavoriteButton
+            tourId={tour.id}
+            initialIsWished={isWished}
+            token={token}
+          />
         </aside>
       </section>
 

@@ -143,7 +143,7 @@ public class BookingService {
         booking.getTour().getId(),
         booking.getDeparture() != null ? booking.getDeparture().getId() : null,
         booking.getTour().getTitle(),
-        booking.getTour().getProvince().getName(),
+        booking.getTour().getProvinceName(),
         booking.getTravelDate(),
         booking.getGuests(),
         booking.getTotalPrice(),

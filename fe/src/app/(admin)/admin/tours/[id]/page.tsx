@@ -129,6 +129,10 @@ export default async function AdminTourDetailPage({ params, searchParams }: Admi
   const departures = sortedDepartures(tour.departures);
   const nearestUpcomingDepartureId = findNearestUpcomingDepartureId(departures);
 
+  const provincesRes = await fetch("https://provinces.open-api.vn/api/v2/p/");
+  const rawProvinces: { name: string; codename: string; code: number }[] = await provincesRes.json();
+  const provinces = rawProvinces.map((p) => ({ code: p.codename, name: p.name }));
+
   return (
     <div className="space-y-6">
       <header className="flex flex-wrap items-center justify-between gap-3">
@@ -169,13 +173,20 @@ export default async function AdminTourDetailPage({ params, searchParams }: Admi
 
           <div className="grid gap-4 md:grid-cols-2">
             <label className="space-y-1 text-sm text-[#355a4d]">
-              Province code
-              <input
-                name="provinceCode"
-                defaultValue={tour.provinceCode}
+              Tỉnh / Thành
+              <select
+                name="provinceData"
+                defaultValue={`${tour.provinceCode}|${tour.provinceName}`}
                 required
                 className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
-              />
+              >
+                <option value="">Chọn tỉnh thành</option>
+                {provinces.map((province) => (
+                  <option key={province.code} value={`${province.code}|${province.name}`}>
+                    {province.name} ({province.code})
+                  </option>
+                ))}
+              </select>
             </label>
 
             <label className="space-y-1 text-sm text-[#355a4d]">
@@ -261,22 +272,36 @@ export default async function AdminTourDetailPage({ params, searchParams }: Admi
 
             <label className="space-y-1 text-sm text-[#355a4d]">
               Điểm khởi hành
-              <input
+              <select
                 name="departureLocation"
                 defaultValue={tour.departureLocation}
                 required
                 className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
-              />
+              >
+                <option value="">Chọn điểm khởi hành</option>
+                {provinces.map((p) => (
+                  <option key={`dep-${p.code}`} value={p.name}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
             </label>
 
             <label className="space-y-1 text-sm text-[#355a4d]">
               Điểm đến
-              <input
+              <select
                 name="destinationLocation"
                 defaultValue={tour.destinationLocation}
                 required
                 className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
-              />
+              >
+                <option value="">Chọn điểm đến</option>
+                {provinces.map((p) => (
+                  <option key={`dest-${p.code}`} value={p.name}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
             </label>
 
             <label className="space-y-1 text-sm text-[#355a4d] md:col-span-2">

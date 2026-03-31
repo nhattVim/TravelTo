@@ -34,6 +34,12 @@ public class User extends BaseAuditEntity {
   @Column(nullable = false, length = 120)
   private String fullName;
 
+  @Column(length = 20)
+  private String phone;
+
+  @Column(length = 255)
+  private String address;
+
   @Column(length = 400)
   private String avatarUrl;
 
