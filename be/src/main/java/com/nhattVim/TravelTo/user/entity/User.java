@@ -14,6 +14,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -42,6 +43,15 @@ public class User extends BaseAuditEntity {
 
   @Column(length = 400)
   private String avatarUrl;
+
+  @Column(length = 10)
+  private String gender;
+
+  @Column
+  private LocalDate dateOfBirth;
+
+  @Column(length = 20)
+  private String identityCard;
 
   @Column(nullable = false, length = 80)
   private String providerUserId;

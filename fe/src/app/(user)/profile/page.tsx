@@ -24,16 +24,8 @@ export default async function ProfilePage() {
   }
 
   return (
-    <div className="space-y-6">
-      <header>
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0a7d59]">Profile</p>
-        <h2 className="mt-2 text-3xl font-semibold text-[#083b2d]">Thông tin cá nhân</h2>
-        <p className="mt-2 text-sm text-[#355a4d]">Quản lí thông tin liên lạc và hồ sơ của bạn.</p>
-      </header>
-      
-      <section className="max-w-xl rounded-3xl border border-[#cbeadf] bg-white p-6 shadow-[0_16px_28px_rgba(12,85,62,0.04)]">
-        <ProfileForm initialProfile={profile} token={session.backendAccessToken} />
-      </section>
+    <div className="rounded-3xl border border-[#cbeadf] bg-white p-6 md:p-10 shadow-[0_16px_28px_rgba(12,85,62,0.04)]">
+      <ProfileForm initialProfile={profile} token={session.backendAccessToken} />
     </div>
   );
 }

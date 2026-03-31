@@ -177,6 +177,26 @@ export async function updateUserProfile(
   });
 }
 
+export async function changePassword(
+  token: string,
+  payload: { oldPassword: string; newPassword: string },
+): Promise<void> {
+  return apiFetch<void>("/api/v1/users/me/password", {
+    method: "PUT",
+    headers: authHeaders(token),
+    body: JSON.stringify(payload),
+    cache: "no-store",
+  });
+}
+
+export async function deleteAccount(token: string): Promise<void> {
+  return apiFetch<void>("/api/v1/users/me", {
+    method: "DELETE",
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+}
+
 // Admin Users
 export async function getAdminUsers(
   token: string,

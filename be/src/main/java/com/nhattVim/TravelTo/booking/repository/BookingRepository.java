@@ -11,4 +11,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
   boolean existsByTour_Id(Long tourId);
 
   boolean existsByDeparture_Id(Long departureId);
+
+  void deleteByUserId(Long userId);
 }

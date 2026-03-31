@@ -27,16 +27,39 @@ export async function SiteHeader() {
         </nav>
 
         {session?.user ? (
-          <div className="flex items-center gap-3">
-            <span className="hidden text-sm text-[#1c4d3f] md:block">{session.user.name}</span>
-            <form action={signOutAction}>
-              <button
-                type="submit"
-                className="rounded-full border border-[#0a7d59] px-4 py-2 text-xs font-semibold uppercase tracking-wide text-[#0a7d59] transition hover:bg-[#e4fff4]"
+          <div className="group relative">
+            <div className="flex cursor-pointer items-center gap-3 py-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0a7d59] font-bold text-white shadow-sm ring-2 ring-[#e4fff4] transition group-hover:ring-[#0a7d59]">
+                {session.user.name?.charAt(0)?.toUpperCase()}
+              </div>
+              <span className="hidden text-sm font-semibold text-[#1c4d3f] transition group-hover:text-[#0a7d59] md:block">
+                {session.user.name}
+              </span>
+            </div>
+
+            <div className="absolute right-0 top-[100%] hidden w-52 flex-col overflow-hidden rounded-2xl border border-[#cdece0] bg-white p-2 shadow-[0_12px_24px_rgba(10,125,89,0.1)] group-hover:flex">
+              <Link
+                href="/profile"
+                className="rounded-xl px-4 py-2.5 text-sm font-medium text-[#26584a] transition hover:bg-[#e4fff4] hover:text-[#0a7d59]"
               >
-                Đăng xuất
-              </button>
-            </form>
+                Hồ sơ của tôi
+              </Link>
+              <Link
+                href="/bookings"
+                className="rounded-xl px-4 py-2.5 text-sm font-medium text-[#26584a] transition hover:bg-[#e4fff4] hover:text-[#0a7d59]"
+              >
+                Chuyến đi của tôi
+              </Link>
+              <div className="my-1 h-px w-full bg-[#eafbf3]" />
+              <form action={signOutAction} className="w-full">
+                <button
+                  type="submit"
+                  className="w-full rounded-xl px-4 py-2.5 text-left text-sm font-medium text-[#d14f4f] transition hover:bg-[#fff5f5]"
+                >
+                  Đăng xuất
+                </button>
+              </form>
+            </div>
           </div>
         ) : (
           <Link

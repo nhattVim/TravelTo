@@ -173,6 +173,9 @@ export interface UserProfileDto {
   phone: string | null;
   address: string | null;
   avatarUrl: string | null;
+  gender: string | null;
+  dateOfBirth: string | null;
+  identityCard: string | null;
   provider: string;
   role: UserRole;
 }
@@ -182,6 +185,9 @@ export interface UserProfileUpdateRequest {
   phone: string;
   address: string;
   avatarUrl: string;
+  gender: string | null;
+  dateOfBirth: string | null;
+  identityCard: string | null;
 }
 
 export interface UserDto {
