@@ -15,7 +15,7 @@ export function AdminSidebar() {
 
   return (
     <aside className="h-fit rounded-3xl border border-[#cdece0] bg-white p-4 shadow-[0_18px_36px_rgba(9,88,61,0.08)]">
-      <p className="px-3 pb-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#0a7d59]">Admin Modules</p>
+      <p className="px-3 pb-2 text-sm font-semibold uppercase tracking-[0.2em] text-[#0a7d59]">Admin Modules</p>
       <nav className="space-y-2">
         {adminLinks.map((item) => {
           const isActive = pathname === item.href;
@@ -28,8 +28,8 @@ export function AdminSidebar() {
                 : "border-[#e0f2ea] bg-[#fafffd] text-[#2d5a4d] hover:border-[#a9e0ca] hover:bg-[#f0fff8]"
                 }`}
             >
-              <p className="text-sm font-semibold">{item.label}</p>
-              <p className="mt-1 text-xs opacity-80">{item.description}</p>
+              <p className="text-base font-semibold">{item.label}</p>
+              <p className="mt-1 text-sm opacity-80">{item.description}</p>
             </Link>
           );
         })}

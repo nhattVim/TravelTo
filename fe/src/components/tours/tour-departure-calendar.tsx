@@ -92,7 +92,7 @@ export function TourDepartureCalendar({ tourId, departures }: TourDepartureCalen
 
   if (sortedDepartures.length === 0) {
     return (
-      <section className="rounded-3xl border border-dashed border-[#9ed8c5] bg-white p-6 text-sm text-[#2f5b4d]">
+      <section className="rounded-3xl border border-dashed border-[#9ed8c5] bg-white p-6 text-base text-[#2f5b4d]">
         Hiện chưa có lịch khởi hành cho tour này. Bạn quay lại sau nhé.
       </section>
     );
@@ -103,11 +103,11 @@ export function TourDepartureCalendar({ tourId, departures }: TourDepartureCalen
 
   return (
     <section className="space-y-5 rounded-3xl border border-[#ccebe0] bg-white p-6 md:p-8">
-      <h2 className="text-2xl font-bold text-[#083b2d]">Lịch khởi hành</h2>
+      <h2 className="text-3xl font-bold text-[#083b2d]">Lịch khởi hành</h2>
 
       <div className="grid gap-4 lg:grid-cols-[150px_1fr]">
         <div className="rounded-2xl border border-[#dbf2e9] bg-[#f8fff9] p-3">
-          <p className="px-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#0a7d59]">Chọn tháng</p>
+          <p className="px-2 text-sm font-semibold uppercase tracking-[0.2em] text-[#0a7d59]">Chọn tháng</p>
           <div className="mt-3 flex flex-wrap gap-2 lg:flex-col">
             {monthKeys.map((monthKey) => (
               <button
@@ -117,7 +117,7 @@ export function TourDepartureCalendar({ tourId, departures }: TourDepartureCalen
                   setSelectedMonthKey(monthKey);
                   setSelectedDepartureId(null);
                 }}
-                className={`cursor-pointer rounded-xl px-3 py-3 text-sm font-semibold transition ${monthKey === effectiveMonthKey
+                className={`cursor-pointer rounded-xl px-3 py-3 text-base font-semibold transition ${monthKey === effectiveMonthKey
                   ? "bg-[#0a7d59] text-white"
                   : "border border-[#9dd6c2] bg-white text-[#0a7d59] hover:bg-[#ebfff6]"
                   }`}
@@ -129,9 +129,9 @@ export function TourDepartureCalendar({ tourId, departures }: TourDepartureCalen
         </div>
 
         <div className="rounded-2xl border border-[#dbf2e9] p-4">
-          <p className="text-center text-xl font-bold uppercase text-[#0a68a4]">{monthLabel(effectiveMonthKey)}</p>
+          <p className="text-center text-2xl font-bold uppercase text-[#0a68a4]">{monthLabel(effectiveMonthKey)}</p>
 
-          <div className="mt-4 grid grid-cols-7 gap-2 text-center text-xs font-semibold uppercase text-[#2f5a4d]">
+          <div className="mt-4 grid grid-cols-7 gap-2 text-center text-sm font-semibold uppercase text-[#2f5a4d]">
             {WEEKDAYS.map((weekday) => (
               <div key={weekday}>{weekday}</div>
             ))}
@@ -152,7 +152,7 @@ export function TourDepartureCalendar({ tourId, departures }: TourDepartureCalen
                     key={`day-${day}`}
                     type="button"
                     disabled
-                    className="h-16 rounded-lg border border-transparent bg-[#f5f8f6] text-sm text-[#9bb6ad]"
+                    className="h-16 rounded-lg border border-transparent bg-[#f5f8f6] text-base text-[#9bb6ad]"
                   >
                     {day}
                   </button>
@@ -169,7 +169,7 @@ export function TourDepartureCalendar({ tourId, departures }: TourDepartureCalen
                     : "border-[#bde6d6] bg-white hover:border-[#0a7d59]"
                     }`}
                 >
-                  <p className="text-sm font-semibold text-[#184b3d]">{day}</p>
+                  <p className="text-base font-semibold text-[#184b3d]">{day}</p>
                   <p className="text-[11px] font-bold text-[#d91f00]">{formatCurrencyVnd(departure.price)}</p>
                 </button>
               );
@@ -180,8 +180,8 @@ export function TourDepartureCalendar({ tourId, departures }: TourDepartureCalen
 
       {selectedDeparture ? (
         <div className="space-y-4 rounded-2xl border border-[#b9e4d3] bg-[#f0fff7] p-5">
-          <h3 className="text-lg font-semibold text-[#0b3f30]">Thông tin chuyến đã chọn</h3>
-          <div className="grid gap-2 text-sm text-[#245145] md:grid-cols-2">
+          <h3 className="text-xl font-semibold text-[#0b3f30]">Thông tin chuyến đã chọn</h3>
+          <div className="grid gap-2 text-base text-[#245145] md:grid-cols-2">
             <p>Ngày đi: {formatDateVi(selectedDeparture.departureDate)}</p>
             <p>Ngày về: {formatDateVi(selectedDeparture.returnDate)}</p>
             <p>Giá: {formatCurrencyVnd(selectedDeparture.price)} / khách</p>
@@ -190,7 +190,7 @@ export function TourDepartureCalendar({ tourId, departures }: TourDepartureCalen
 
           <Link
             href={`/bookings?tourId=${tourId}&departureId=${selectedDeparture.id}`}
-            className="inline-flex rounded-full bg-[#0a7d59] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#085a41]"
+            className="inline-flex rounded-full bg-[#0a7d59] px-6 py-3 text-base font-semibold text-white transition hover:bg-[#085a41]"
           >
             Đặt chuyến này
           </Link>

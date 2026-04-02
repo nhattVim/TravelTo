@@ -45,7 +45,7 @@ export function FavoriteButton({
     <button
       onClick={toggleWishlist}
       disabled={loading}
-      className={`mt-4 w-full flex items-center justify-center gap-2 rounded-xl border border-[#0a7d59] py-3 text-sm font-semibold transition ${
+      className={`mt-4 w-full flex items-center justify-center gap-2 rounded-xl border border-[#0a7d59] py-3 text-base font-semibold transition ${
         isWished 
           ? "bg-[#e2f5ec] text-[#0a7d59] hover:bg-[#d1ecd0]" 
           : "bg-white text-[#0a7d59] hover:bg-[#f0fbf6]"

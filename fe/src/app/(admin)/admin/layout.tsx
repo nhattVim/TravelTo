@@ -19,18 +19,18 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
         <header className="rounded-3xl border border-[#cdece0] bg-white px-5 py-4 shadow-[0_20px_45px_rgba(9,88,61,0.08)]">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#0a7d59]">TravelTo Admin</p>
-              <h1 className="mt-1 text-2xl font-semibold text-[#083b2d]">Khu vực quản trị hệ thống</h1>
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#0a7d59]">TravelTo Admin</p>
+              <h1 className="mt-1 text-3xl font-semibold text-[#083b2d]">Khu vực quản trị hệ thống</h1>
             </div>
             <div className="flex items-center gap-2">
-              <div className="rounded-2xl border border-[#cdece0] bg-[#f3fff9] px-4 py-2 text-right text-xs text-[#245547]">
+              <div className="rounded-2xl border border-[#cdece0] bg-[#f3fff9] px-4 py-2 text-right text-sm text-[#245547]">
                 <span className="font-semibold text-[#0d3d30]">{session.user?.name || session.user?.email}</span>
                 <span className="opacity-80 ml-2">Admin</span>
               </div>
               <form action={signOutAction}>
                 <button
                   type="submit"
-                  className="rounded-2xl border border-[#0a7d59] bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wide text-[#0a7d59] transition hover:bg-[#e6fff4]"
+                  className="rounded-2xl border border-[#0a7d59] bg-white px-4 py-2 text-sm font-semibold uppercase tracking-wide text-[#0a7d59] transition hover:bg-[#e6fff4]"
                 >
                   Đăng xuất
                 </button>

@@ -43,14 +43,14 @@ export function TourImageSlider({ images, title }: TourImageSliderProps) {
             <button
               type="button"
               onClick={goPrev}
-              className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/85 px-3 py-2 text-sm font-semibold text-[#0a7d59] shadow transition hover:bg-white"
+              className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/85 px-3 py-2 text-base font-semibold text-[#0a7d59] shadow transition hover:bg-white"
             >
               ←
             </button>
             <button
               type="button"
               onClick={goNext}
-              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/85 px-3 py-2 text-sm font-semibold text-[#0a7d59] shadow transition hover:bg-white"
+              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/85 px-3 py-2 text-base font-semibold text-[#0a7d59] shadow transition hover:bg-white"
             >
               →
             </button>

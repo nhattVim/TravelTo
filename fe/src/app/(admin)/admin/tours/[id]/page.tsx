@@ -137,31 +137,31 @@ export default async function AdminTourDetailPage({ params, searchParams }: Admi
     <div className="space-y-6">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0a7d59]">Tour Management</p>
-          <h2 className="mt-2 text-3xl font-semibold text-[#083b2d]">Chi tiết tour #{tour.id}</h2>
-          <p className="mt-2 text-sm text-[#355a4d]">{tour.title}</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#0a7d59]">Tour Management</p>
+          <h2 className="mt-2 text-4xl font-semibold text-[#083b2d]">Chi tiết tour #{tour.id}</h2>
+          <p className="mt-2 text-base text-[#355a4d]">{tour.title}</p>
         </div>
 
         <Link
           href={backHref}
-          className="rounded-xl border border-[#9ad9bf] bg-white px-4 py-2 text-sm font-semibold text-[#0a7d59] transition hover:bg-[#f1fff8]"
+          className="rounded-xl border border-[#9ad9bf] bg-white px-4 py-2 text-base font-semibold text-[#0a7d59] transition hover:bg-[#f1fff8]"
         >
           ← Quay lại danh sách
         </Link>
       </header>
 
       {message ? (
-        <section className="rounded-2xl border border-[#bfe4d2] bg-[#effff7] px-4 py-3 text-sm text-[#1f5847]">{message}</section>
+        <section className="rounded-2xl border border-[#bfe4d2] bg-[#effff7] px-4 py-3 text-base text-[#1f5847]">{message}</section>
       ) : null}
 
       <section className="rounded-2xl border border-[#cdece0] bg-white p-5">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <h3 className="text-lg font-semibold text-[#083b2d]">Thông tin tour</h3>
+          <h3 className="text-xl font-semibold text-[#083b2d]">Thông tin tour</h3>
           <form action={deleteAdminTourAction}>
             <input type="hidden" name="tourId" value={tour.id} />
             <ConfirmSubmitButton
               message="Bạn có chắc muốn xóa tour này không?"
-              className="rounded-xl border border-[#f2c0b4] bg-[#fff7f5] px-3 py-2 text-xs font-semibold text-[#a93e23] transition hover:bg-[#ffece6]"
+              className="rounded-xl border border-[#f2c0b4] bg-[#fff7f5] px-3 py-2 text-sm font-semibold text-[#a93e23] transition hover:bg-[#ffece6]"
             >
               Xóa tour
             </ConfirmSubmitButton>
@@ -172,13 +172,13 @@ export default async function AdminTourDetailPage({ params, searchParams }: Admi
           <input type="hidden" name="tourId" value={tour.id} />
 
           <div className="grid gap-4 md:grid-cols-2">
-            <label className="space-y-1 text-sm text-[#355a4d]">
+            <label className="space-y-1 text-base text-[#355a4d]">
               Tỉnh / Thành
               <select
                 name="provinceData"
                 defaultValue={`${tour.provinceCode}|${tour.provinceName}`}
                 required
-                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
               >
                 <option value="">Chọn tỉnh thành</option>
                 {provinces.map((province) => (
@@ -189,51 +189,51 @@ export default async function AdminTourDetailPage({ params, searchParams }: Admi
               </select>
             </label>
 
-            <label className="space-y-1 text-sm text-[#355a4d]">
+            <label className="space-y-1 text-base text-[#355a4d]">
               Trạng thái
               <select
                 name="status"
                 defaultValue={tour.status}
-                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
               >
                 <option value="PUBLISHED">PUBLISHED</option>
                 <option value="DRAFT">DRAFT</option>
               </select>
             </label>
 
-            <label className="space-y-1 text-sm text-[#355a4d] md:col-span-2">
+            <label className="space-y-1 text-base text-[#355a4d] md:col-span-2">
               Tiêu đề
               <input
                 name="title"
                 defaultValue={tour.title}
                 required
-                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
               />
             </label>
 
-            <label className="space-y-1 text-sm text-[#355a4d] md:col-span-2">
+            <label className="space-y-1 text-base text-[#355a4d] md:col-span-2">
               Tóm tắt
               <textarea
                 name="summary"
                 defaultValue={tour.summary}
                 required
                 rows={2}
-                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
               />
             </label>
 
-            <label className="space-y-1 text-sm text-[#355a4d] md:col-span-2">
+            <label className="space-y-1 text-base text-[#355a4d] md:col-span-2">
               Mô tả chi tiết
               <textarea
                 name="description"
                 defaultValue={tour.description}
                 required
                 rows={5}
-                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
               />
             </label>
 
-            <label className="space-y-1 text-sm text-[#355a4d]">
+            <label className="space-y-1 text-base text-[#355a4d]">
               Giá cơ bản (VND)
               <input
                 name="price"
@@ -241,12 +241,12 @@ export default async function AdminTourDetailPage({ params, searchParams }: Admi
                 min={1}
                 defaultValue={tour.price}
                 required
-                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
               />
             </label>
 
             <div className="grid grid-cols-2 gap-3">
-              <label className="space-y-1 text-sm text-[#355a4d]">
+              <label className="space-y-1 text-base text-[#355a4d]">
                 Số ngày
                 <input
                   name="days"
@@ -254,10 +254,10 @@ export default async function AdminTourDetailPage({ params, searchParams }: Admi
                   min={1}
                   defaultValue={tour.days}
                   required
-                  className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                  className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
                 />
               </label>
-              <label className="space-y-1 text-sm text-[#355a4d]">
+              <label className="space-y-1 text-base text-[#355a4d]">
                 Số đêm
                 <input
                   name="nights"
@@ -265,18 +265,18 @@ export default async function AdminTourDetailPage({ params, searchParams }: Admi
                   min={0}
                   defaultValue={tour.nights}
                   required
-                  className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                  className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
                 />
               </label>
             </div>
 
-            <label className="space-y-1 text-sm text-[#355a4d]">
+            <label className="space-y-1 text-base text-[#355a4d]">
               Điểm khởi hành
               <select
                 name="departureLocation"
                 defaultValue={tour.departureLocation}
                 required
-                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
               >
                 <option value="">Chọn điểm khởi hành</option>
                 {provinces.map((p) => (
@@ -287,13 +287,13 @@ export default async function AdminTourDetailPage({ params, searchParams }: Admi
               </select>
             </label>
 
-            <label className="space-y-1 text-sm text-[#355a4d]">
+            <label className="space-y-1 text-base text-[#355a4d]">
               Điểm đến
               <select
                 name="destinationLocation"
                 defaultValue={tour.destinationLocation}
                 required
-                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
               >
                 <option value="">Chọn điểm đến</option>
                 {provinces.map((p) => (
@@ -304,98 +304,98 @@ export default async function AdminTourDetailPage({ params, searchParams }: Admi
               </select>
             </label>
 
-            <label className="space-y-1 text-sm text-[#355a4d] md:col-span-2">
+            <label className="space-y-1 text-base text-[#355a4d] md:col-span-2">
               Ảnh đại diện (URL)
               <input
                 name="imageUrl"
                 defaultValue={tour.imageUrl ?? ""}
-                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
               />
             </label>
 
-            <label className="space-y-1 text-sm text-[#355a4d] md:col-span-2">
+            <label className="space-y-1 text-base text-[#355a4d] md:col-span-2">
               Danh sách ảnh (mỗi dòng 1 URL)
               <textarea
                 name="imageUrls"
                 defaultValue={tour.imageUrls.join("\n")}
                 rows={3}
-                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
               />
             </label>
 
-            <label className="space-y-1 text-sm text-[#355a4d]">
+            <label className="space-y-1 text-base text-[#355a4d]">
               Điểm nổi bật
               <textarea
                 name="attractions"
                 defaultValue={tour.additionalInfo.attractions ?? ""}
                 rows={2}
-                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
               />
             </label>
 
-            <label className="space-y-1 text-sm text-[#355a4d]">
+            <label className="space-y-1 text-base text-[#355a4d]">
               Ẩm thực
               <textarea
                 name="cuisine"
                 defaultValue={tour.additionalInfo.cuisine ?? ""}
                 rows={2}
-                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
               />
             </label>
 
-            <label className="space-y-1 text-sm text-[#355a4d]">
+            <label className="space-y-1 text-base text-[#355a4d]">
               Phù hợp với
               <textarea
                 name="suitableFor"
                 defaultValue={tour.additionalInfo.suitableFor ?? ""}
                 rows={2}
-                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
               />
             </label>
 
-            <label className="space-y-1 text-sm text-[#355a4d]">
+            <label className="space-y-1 text-base text-[#355a4d]">
               Thời điểm lý tưởng
               <textarea
                 name="idealTime"
                 defaultValue={tour.additionalInfo.idealTime ?? ""}
                 rows={2}
-                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
               />
             </label>
 
-            <label className="space-y-1 text-sm text-[#355a4d]">
+            <label className="space-y-1 text-base text-[#355a4d]">
               Di chuyển
               <textarea
                 name="transport"
                 defaultValue={tour.additionalInfo.transport ?? ""}
                 rows={2}
-                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
               />
             </label>
 
-            <label className="space-y-1 text-sm text-[#355a4d]">
+            <label className="space-y-1 text-base text-[#355a4d]">
               Khuyến mãi
               <textarea
                 name="promotion"
                 defaultValue={tour.additionalInfo.promotion ?? ""}
                 rows={2}
-                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
               />
             </label>
 
-            <label className="space-y-1 text-sm text-[#355a4d] md:col-span-2">
+            <label className="space-y-1 text-base text-[#355a4d] md:col-span-2">
               Ghi chú
               <textarea
                 name="notes"
                 defaultValue={tour.additionalInfo.notes ?? ""}
                 rows={3}
-                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
               />
             </label>
           </div>
 
           <div className="flex justify-end">
-            <button type="submit" className="rounded-xl bg-[#0a7d59] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#085a41]">
+            <button type="submit" className="rounded-xl bg-[#0a7d59] px-4 py-2 text-base font-semibold text-white transition hover:bg-[#085a41]">
               Lưu thông tin tour
             </button>
           </div>
@@ -404,12 +404,12 @@ export default async function AdminTourDetailPage({ params, searchParams }: Admi
 
       <section className="rounded-2xl border border-[#cdece0] bg-white p-5">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <h3 className="text-lg font-semibold text-[#083b2d]">Đợt khởi hành ({tour.departures.length})</h3>
-          <p className="text-sm text-[#355a4d]">Giá hiện tại: {formatCurrencyVnd(tour.price)}</p>
+          <h3 className="text-xl font-semibold text-[#083b2d]">Đợt khởi hành ({tour.departures.length})</h3>
+          <p className="text-base text-[#355a4d]">Giá hiện tại: {formatCurrencyVnd(tour.price)}</p>
         </div>
 
         {departures.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[#98d8c0] bg-[#f8fffb] p-4 text-sm text-[#355a4d]">
+          <div className="rounded-2xl border border-dashed border-[#98d8c0] bg-[#f8fffb] p-4 text-base text-[#355a4d]">
             Chưa có đợt khởi hành nào.
           </div>
         ) : (
@@ -425,8 +425,8 @@ export default async function AdminTourDetailPage({ params, searchParams }: Admi
                       : "border border-[#d8efe6] bg-[#fbfffd]"
                     }`}
                 >
-                  <div className="mb-3 text-sm text-[#355a4d]">
-                    <p className="text-xs uppercase tracking-wide text-[#0a7d59]">Đợt #{departure.id}</p>
+                  <div className="mb-3 text-base text-[#355a4d]">
+                    <p className="text-sm uppercase tracking-wide text-[#0a7d59]">Đợt #{departure.id}</p>
                     {isNearestUpcoming ? (
                       <p className="mt-1 inline-block rounded-full border border-[#8bd0b3] bg-[#e9fff4] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-[#0a7d59]">
                         Gần nhất sắp khởi hành
@@ -441,29 +441,29 @@ export default async function AdminTourDetailPage({ params, searchParams }: Admi
                     <input type="hidden" name="tourId" value={tour.id} />
                     <input type="hidden" name="departureId" value={departure.id} />
 
-                    <label className="space-y-1 text-xs text-[#355a4d]">
+                    <label className="space-y-1 text-sm text-[#355a4d]">
                       Ngày đi
                       <input
                         name="departureDate"
                         type="date"
                         required
                         defaultValue={toDateInputValue(departure.departureDate)}
-                        className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                        className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
                       />
                     </label>
 
-                    <label className="space-y-1 text-xs text-[#355a4d]">
+                    <label className="space-y-1 text-sm text-[#355a4d]">
                       Ngày về
                       <input
                         name="returnDate"
                         type="date"
                         required
                         defaultValue={toDateInputValue(departure.returnDate)}
-                        className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                        className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
                       />
                     </label>
 
-                    <label className="space-y-1 text-xs text-[#355a4d]">
+                    <label className="space-y-1 text-sm text-[#355a4d]">
                       Giá (VND)
                       <input
                         name="price"
@@ -471,11 +471,11 @@ export default async function AdminTourDetailPage({ params, searchParams }: Admi
                         min={1}
                         required
                         defaultValue={departure.price}
-                        className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                        className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
                       />
                     </label>
 
-                    <label className="space-y-1 text-xs text-[#355a4d]">
+                    <label className="space-y-1 text-sm text-[#355a4d]">
                       Tổng chỗ
                       <input
                         name="slotsTotal"
@@ -483,11 +483,11 @@ export default async function AdminTourDetailPage({ params, searchParams }: Admi
                         min={1}
                         required
                         defaultValue={departure.slotsTotal}
-                        className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                        className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
                       />
                     </label>
 
-                    <label className="space-y-1 text-xs text-[#355a4d]">
+                    <label className="space-y-1 text-sm text-[#355a4d]">
                       Chỗ trống
                       <input
                         name="slotsAvailable"
@@ -495,14 +495,14 @@ export default async function AdminTourDetailPage({ params, searchParams }: Admi
                         min={0}
                         required
                         defaultValue={departure.slotsAvailable}
-                        className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                        className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
                       />
                     </label>
 
                     <div className="md:col-span-5 flex flex-wrap gap-2">
                       <button
                         type="submit"
-                        className="rounded-xl bg-[#0a7d59] px-3 py-2 text-xs font-semibold text-white transition hover:bg-[#085a41]"
+                        className="rounded-xl bg-[#0a7d59] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[#085a41]"
                       >
                         Lưu đợt khởi hành
                       </button>
@@ -514,7 +514,7 @@ export default async function AdminTourDetailPage({ params, searchParams }: Admi
                     <input type="hidden" name="departureId" value={departure.id} />
                     <ConfirmSubmitButton
                       message="Bạn có chắc muốn xóa đợt khởi hành này không?"
-                      className="rounded-xl border border-[#f2c0b4] bg-[#fff7f5] px-3 py-2 text-xs font-semibold text-[#a93e23] transition hover:bg-[#ffece6]"
+                      className="rounded-xl border border-[#f2c0b4] bg-[#fff7f5] px-3 py-2 text-sm font-semibold text-[#a93e23] transition hover:bg-[#ffece6]"
                     >
                       Xóa đợt này
                     </ConfirmSubmitButton>
@@ -528,33 +528,33 @@ export default async function AdminTourDetailPage({ params, searchParams }: Admi
         <form action={createAdminDepartureAction} className="mt-5 grid gap-3 rounded-2xl border border-dashed border-[#9cd8c1] bg-[#f8fffb] p-4 md:grid-cols-5">
           <input type="hidden" name="tourId" value={tour.id} />
 
-          <label className="space-y-1 text-xs text-[#355a4d]">
+          <label className="space-y-1 text-sm text-[#355a4d]">
             Ngày đi
-            <input name="departureDate" type="date" required className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]" />
+            <input name="departureDate" type="date" required className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]" />
           </label>
 
-          <label className="space-y-1 text-xs text-[#355a4d]">
+          <label className="space-y-1 text-sm text-[#355a4d]">
             Ngày về
-            <input name="returnDate" type="date" required className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]" />
+            <input name="returnDate" type="date" required className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]" />
           </label>
 
-          <label className="space-y-1 text-xs text-[#355a4d]">
+          <label className="space-y-1 text-sm text-[#355a4d]">
             Giá (VND)
-            <input name="price" type="number" min={1} required className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]" />
+            <input name="price" type="number" min={1} required className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]" />
           </label>
 
-          <label className="space-y-1 text-xs text-[#355a4d]">
+          <label className="space-y-1 text-sm text-[#355a4d]">
             Tổng chỗ
-            <input name="slotsTotal" type="number" min={1} required className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]" />
+            <input name="slotsTotal" type="number" min={1} required className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]" />
           </label>
 
-          <label className="space-y-1 text-xs text-[#355a4d]">
+          <label className="space-y-1 text-sm text-[#355a4d]">
             Chỗ trống
-            <input name="slotsAvailable" type="number" min={0} required className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]" />
+            <input name="slotsAvailable" type="number" min={0} required className="w-full rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]" />
           </label>
 
           <div className="md:col-span-5">
-            <button type="submit" className="rounded-xl bg-[#0a7d59] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#085a41]">
+            <button type="submit" className="rounded-xl bg-[#0a7d59] px-4 py-2 text-base font-semibold text-white transition hover:bg-[#085a41]">
               + Thêm đợt khởi hành
             </button>
           </div>

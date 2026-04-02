@@ -114,51 +114,51 @@ export default async function AdminTourListPage({ searchParams }: AdminTourListP
     <div className="space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0a7d59]">Tour Management</p>
-          <h2 className="mt-2 text-3xl font-semibold text-[#083b2d]">Danh sách tour</h2>
-          <p className="mt-2 text-sm text-[#355a4d]">Chọn tour để xem chi tiết và chỉnh sửa, hoặc thêm tour mới.</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#0a7d59]">Tour Management</p>
+          <h2 className="mt-2 text-4xl font-semibold text-[#083b2d]">Danh sách tour</h2>
+          <p className="mt-2 text-base text-[#355a4d]">Chọn tour để xem chi tiết và chỉnh sửa, hoặc thêm tour mới.</p>
         </div>
 
         <Link
           href="/admin/tours/new"
-          className="rounded-xl bg-[#0a7d59] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#085a41]"
+          className="rounded-xl bg-[#0a7d59] px-4 py-2 text-base font-semibold text-white transition hover:bg-[#085a41]"
         >
           + Thêm tour mới
         </Link>
       </header>
 
       {feedback ? (
-        <section className="rounded-2xl border border-[#bfe4d2] bg-[#effff7] px-4 py-3 text-sm text-[#1f5847]">{feedback}</section>
+        <section className="rounded-2xl border border-[#bfe4d2] bg-[#effff7] px-4 py-3 text-base text-[#1f5847]">{feedback}</section>
       ) : null}
 
       <section className="rounded-2xl border border-[#cdece0] bg-white p-5">
         <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h3 className="text-lg font-semibold text-[#083b2d]">Tổng tour: {filteredTours.length}</h3>
-            <p className="text-sm text-[#355a4d]">Trang {safePage}/{totalPages}</p>
+            <h3 className="text-xl font-semibold text-[#083b2d]">Tổng tour: {filteredTours.length}</h3>
+            <p className="text-base text-[#355a4d]">Trang {safePage}/{totalPages}</p>
           </div>
 
           <form action="/admin/tours" className="flex flex-wrap items-end gap-2">
-            <label className="text-xs text-[#355a4d]">
+            <label className="text-sm text-[#355a4d]">
               Tìm kiếm
               <input
                 type="text"
                 name="q"
                 defaultValue={pickSingle(params.q) ?? ""}
                 placeholder="Tên tour, tỉnh, điểm đi/đến..."
-                className="mt-1 block w-64 rounded-xl border border-[#a7d9c5] px-3 py-2 text-sm text-[#123d31]"
+                className="mt-1 block w-64 rounded-xl border border-[#a7d9c5] px-3 py-2 text-base text-[#123d31]"
               />
             </label>
             <input type="hidden" name="size" value={pageSize} />
             <button
               type="submit"
-              className="rounded-xl border border-[#9ad9bf] bg-white px-3 py-2 text-xs font-semibold text-[#0a7d59] transition hover:bg-[#f1fff8]"
+              className="rounded-xl border border-[#9ad9bf] bg-white px-3 py-2 text-sm font-semibold text-[#0a7d59] transition hover:bg-[#f1fff8]"
             >
               Lọc
             </button>
             <Link
               href="/admin/tours"
-              className="rounded-xl border border-[#d2e8df] bg-[#fbfffd] px-3 py-2 text-xs font-semibold text-[#315748] transition hover:bg-[#f2fbf7]"
+              className="rounded-xl border border-[#d2e8df] bg-[#fbfffd] px-3 py-2 text-sm font-semibold text-[#315748] transition hover:bg-[#f2fbf7]"
             >
               Bỏ lọc
             </Link>
@@ -166,7 +166,7 @@ export default async function AdminTourListPage({ searchParams }: AdminTourListP
         </div>
 
         {pagedTours.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[#98d8c0] bg-[#f8fffb] p-6 text-sm text-[#355a4d]">
+          <div className="rounded-2xl border border-dashed border-[#98d8c0] bg-[#f8fffb] p-6 text-base text-[#355a4d]">
             Chưa có tour nào.
           </div>
         ) : (
@@ -175,15 +175,15 @@ export default async function AdminTourListPage({ searchParams }: AdminTourListP
               <article key={tour.id} className="rounded-2xl border border-[#d8efe6] bg-[#fbfffd] p-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <p className="text-xs uppercase tracking-wide text-[#0a7d59]">#{tour.id} • {tour.provinceName}</p>
-                    <h4 className="mt-1 text-lg font-semibold text-[#083b2d]">{tour.title}</h4>
-                    <p className="mt-1 text-sm text-[#355a4d]">{tour.departureLocation} → {tour.destinationLocation}</p>
-                    <p className="mt-1 text-sm text-[#355a4d]">
+                    <p className="text-sm uppercase tracking-wide text-[#0a7d59]">#{tour.id} • {tour.provinceName}</p>
+                    <h4 className="mt-1 text-xl font-semibold text-[#083b2d]">{tour.title}</h4>
+                    <p className="mt-1 text-base text-[#355a4d]">{tour.departureLocation} → {tour.destinationLocation}</p>
+                    <p className="mt-1 text-base text-[#355a4d]">
                       {formatCurrencyVnd(tour.price)} • {tour.days}N{tour.nights}Đ • {tour.slotsAvailable}/{tour.slotsTotal} chỗ
                     </p>
                   </div>
 
-                  <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${statusClass(tour.status)}`}>
+                  <span className={`rounded-full border px-3 py-1 text-sm font-semibold ${statusClass(tour.status)}`}>
                     {tour.status}
                   </span>
                 </div>
@@ -191,7 +191,7 @@ export default async function AdminTourListPage({ searchParams }: AdminTourListP
                 <div className="mt-3 flex flex-wrap gap-2">
                   <Link
                     href={`/admin/tours/${tour.id}?q=${encodeURIComponent(keyword)}&page=${safePage}&size=${pageSize}`}
-                    className="rounded-xl border border-[#9ad9bf] bg-white px-3 py-2 text-xs font-semibold text-[#0a7d59] transition hover:bg-[#f1fff8]"
+                    className="rounded-xl border border-[#9ad9bf] bg-white px-3 py-2 text-sm font-semibold text-[#0a7d59] transition hover:bg-[#f1fff8]"
                   >
                     Xem chi tiết
                   </Link>
@@ -200,7 +200,7 @@ export default async function AdminTourListPage({ searchParams }: AdminTourListP
                     <input type="hidden" name="tourId" value={tour.id} />
                     <ConfirmSubmitButton
                       message="Bạn có chắc muốn xóa tour này không?"
-                      className="rounded-xl border border-[#f2c0b4] bg-[#fff7f5] px-3 py-2 text-xs font-semibold text-[#a93e23] transition hover:bg-[#ffece6]"
+                      className="rounded-xl border border-[#f2c0b4] bg-[#fff7f5] px-3 py-2 text-sm font-semibold text-[#a93e23] transition hover:bg-[#ffece6]"
                     >
                       Xóa tour
                     </ConfirmSubmitButton>
@@ -217,7 +217,7 @@ export default async function AdminTourListPage({ searchParams }: AdminTourListP
               <Link
                 key={page}
                 href={buildListLink(page, pageSize, keyword)}
-                className={`rounded-lg px-3 py-1 text-sm font-semibold transition ${page === safePage
+                className={`rounded-lg px-3 py-1 text-base font-semibold transition ${page === safePage
                     ? "bg-[#0a7d59] text-white"
                     : "border border-[#9ad9bf] bg-white text-[#0a7d59] hover:bg-[#f1fff8]"
                   }`}

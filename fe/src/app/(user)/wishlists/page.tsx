@@ -21,15 +21,15 @@ export default async function WishlistPage() {
   return (
     <div className="space-y-6">
       <header>
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0a7d59]">Wishlist</p>
-        <h2 className="mt-2 text-3xl font-semibold text-[#083b2d]">Tour yêu thích</h2>
-        <p className="mt-2 text-sm text-[#355a4d]">
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#0a7d59]">Wishlist</p>
+        <h2 className="mt-2 text-4xl font-semibold text-[#083b2d]">Tour yêu thích</h2>
+        <p className="mt-2 text-base text-[#355a4d]">
           Danh sách các chuyến đi mà bạn đang quan tâm và muốn lưu lại để tham khảo sau.
         </p>
       </header>
 
       {wishlists.items.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-[#98d8c0] bg-[#f8fffb] p-6 text-sm text-[#355a4d]">
+        <div className="rounded-2xl border border-dashed border-[#98d8c0] bg-[#f8fffb] p-6 text-base text-[#355a4d]">
           Bạn chưa có tour yêu thích nào.
         </div>
       ) : (
@@ -45,12 +45,12 @@ export default async function WishlistPage() {
                 />
               </div>
               <div className="p-4 space-y-3">
-                <h3 className="line-clamp-1 text-lg font-semibold text-[#083b2d]">{item.tourTitle}</h3>
-                <p className="text-lg font-bold text-[#0a7d59]">{formatCurrencyVnd(item.tourPrice)}</p>
+                <h3 className="line-clamp-1 text-xl font-semibold text-[#083b2d]">{item.tourTitle}</h3>
+                <p className="text-xl font-bold text-[#0a7d59]">{formatCurrencyVnd(item.tourPrice)}</p>
                 <div className="flex items-center justify-between gap-2 pt-2">
                   <Link
                     href={`/tours/${item.tourId}`}
-                    className="flex-1 text-center rounded-xl bg-[#0a7d59] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#085a41]"
+                    className="flex-1 text-center rounded-xl bg-[#0a7d59] px-4 py-2 text-base font-semibold text-white transition hover:bg-[#085a41]"
                   >
                     Xem chi tiết
                   </Link>

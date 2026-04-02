@@ -15,7 +15,7 @@ export default async function UserLayout({ children }: UserLayoutProps) {
 
   return (
     <SiteShell>
-      <div className="mx-auto grid w-full max-w-[1240px] grid-cols-1 gap-8 px-5 py-8 md:grid-cols-4 md:px-8">
+      <div className="mx-auto grid w-full max-w-310 grid-cols-1 gap-8 px-5 py-8 md:grid-cols-4 md:px-8">
         <div className="md:col-span-1">
           <UserSidebar user={session.user} />
         </div>

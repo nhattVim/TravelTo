@@ -40,14 +40,14 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
 
       <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
         <aside className="h-fit rounded-3xl border border-[#cbeadf] bg-white p-5 shadow-[0_16px_28px_rgba(12,85,62,0.06)]">
-          <h3 className="text-base font-semibold text-[#0b3d2f]">Bộ lọc tìm kiếm</h3>
+          <h3 className="text-lg font-semibold text-[#0b3d2f]">Bộ lọc tìm kiếm</h3>
           <form method="get" className="mt-4 space-y-4">
-            <label className="block space-y-2 text-sm text-[#2f5b4d]">
+            <label className="block space-y-2 text-base text-[#2f5b4d]">
               <span className="font-medium">Điểm khởi hành</span>
               <select
                 name="departure"
                 defaultValue={departure ?? ""}
-                className="w-full rounded-xl border border-[#98d9c1] bg-white px-3 py-2 text-sm outline-none focus:border-[#0a7d59]"
+                className="w-full rounded-xl border border-[#98d9c1] bg-white px-3 py-2 text-base outline-none focus:border-[#0a7d59]"
               >
                 <option value="">Tất cả</option>
                 {provinces.map((p: { code: string; name: string }) => (
@@ -57,12 +57,12 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
                 ))}
               </select>
             </label>
-            <label className="block space-y-2 text-sm text-[#2f5b4d]">
+            <label className="block space-y-2 text-base text-[#2f5b4d]">
               <span className="font-medium">Điểm đến</span>
               <select
                 name="destination"
                 defaultValue={destination ?? (province ? (provinces.find((p: { code: string; name: string }) => p.code === province)?.name ?? "") : "")}
-                className="w-full rounded-xl border border-[#98d9c1] bg-white px-3 py-2 text-sm outline-none focus:border-[#0a7d59]"
+                className="w-full rounded-xl border border-[#98d9c1] bg-white px-3 py-2 text-base outline-none focus:border-[#0a7d59]"
               >
                 <option value="">Tất cả</option>
                 {provinces.map((p: { code: string; name: string }) => (
@@ -76,13 +76,13 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
             <div className="flex gap-2">
               <button
                 type="submit"
-                className="flex-1 rounded-xl bg-[#0a7d59] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#085a41]"
+                className="flex-1 rounded-xl bg-[#0a7d59] px-4 py-2 text-base font-semibold text-white transition hover:bg-[#085a41]"
               >
                 Áp dụng
               </button>
               <Link
                 href="/tours"
-                className="rounded-xl border border-[#8fd5bd] px-4 py-2 text-sm font-semibold text-[#0a7d59] transition hover:bg-[#ecfff7]"
+                className="rounded-xl border border-[#8fd5bd] px-4 py-2 text-base font-semibold text-[#0a7d59] transition hover:bg-[#ecfff7]"
               >
                 Xóa lọc
               </Link>
@@ -98,7 +98,7 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
               ))}
             </div>
           ) : (
-            <div className="rounded-2xl border border-dashed border-[#90d6be] bg-white p-8 text-sm text-[#2d584b]">
+            <div className="rounded-2xl border border-dashed border-[#90d6be] bg-white p-8 text-base text-[#2d584b]">
               Chưa có tour phù hợp bộ lọc hiện tại.
             </div>
           )}

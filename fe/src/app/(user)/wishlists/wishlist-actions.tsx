@@ -25,7 +25,7 @@ export function WishlistActions({ token, tourId }: { token: string; tourId: numb
     <button
       onClick={handleRemove}
       disabled={loading}
-      className={`rounded-xl border border-[#ff9f9f] bg-[#fff5f5] px-4 py-2 text-sm font-semibold text-[#d14f4f] transition hover:bg-[#ffebeb] ${
+      className={`rounded-xl border border-[#ff9f9f] bg-[#fff5f5] px-4 py-2 text-base font-semibold text-[#d14f4f] transition hover:bg-[#ffebeb] ${
         loading ? "opacity-50" : ""
       }`}
     >

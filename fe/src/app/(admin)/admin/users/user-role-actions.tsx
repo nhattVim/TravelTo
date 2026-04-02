@@ -35,7 +35,7 @@ export function UserRoleActions({ token, userId, currentRole }: { token: string;
       defaultValue={currentRole}
       onChange={handleRoleChange}
       disabled={loading}
-      className="rounded-lg border border-[#cdece0] bg-[#f8fffb] px-2 py-1 text-sm text-[#083b2d] outline-none transition focus:border-[#0a7d59]"
+      className="rounded-lg border border-[#cdece0] bg-[#f8fffb] px-2 py-1 text-base text-[#083b2d] outline-none transition focus:border-[#0a7d59]"
     >
       <option value="USER">USER</option>
       <option value="ADMIN">ADMIN</option>

@@ -17,7 +17,7 @@ export default async function ProfilePage() {
 
   if (!profile) {
     return (
-      <div className="rounded-2xl border border-dashed border-[#ff9f9f] bg-[#fff5f5] p-6 text-sm text-[#d14f4f]">
+      <div className="rounded-2xl border border-dashed border-[#ff9f9f] bg-[#fff5f5] p-6 text-base text-[#d14f4f]">
         Không thể tải thông tin cá nhân. Vui lòng thử lại sau.
       </div>
     );
