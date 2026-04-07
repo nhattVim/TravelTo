@@ -18,12 +18,16 @@ public interface TourRepository extends JpaRepository<Tour, Long> {
         AND (:provinceCode IS NULL OR :provinceCode = '' OR LOWER(t.provinceCode) = LOWER(:provinceCode))
         AND (:departureLocation IS NULL OR :departureLocation = '' OR LOWER(t.departureLocation) = LOWER(:departureLocation))
         AND (:destinationLocation IS NULL OR :destinationLocation = '' OR LOWER(t.destinationLocation) = LOWER(:destinationLocation))
+        AND (:minPrice IS NULL OR t.price >= :minPrice)
+        AND (:maxPrice IS NULL OR t.price <= :maxPrice)
       """)
   Page<Tour> searchPublished(
       @Param("status") TourStatus status,
       @Param("provinceCode") String provinceCode,
       @Param("departureLocation") String departureLocation,
       @Param("destinationLocation") String destinationLocation,
+      @Param("minPrice") java.math.BigDecimal minPrice,
+      @Param("maxPrice") java.math.BigDecimal maxPrice,
       Pageable pageable);
 
   Page<Tour> findByStatus(TourStatus status, Pageable pageable);

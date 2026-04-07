@@ -15,6 +15,8 @@ export async function getTours(filters?: {
   provinceCode?: string;
   departureLocation?: string;
   destinationLocation?: string;
+  minPrice?: string | number;
+  maxPrice?: string | number;
 }): Promise<PagedResponse<TourItem>> {
   const searchParams = new URLSearchParams();
 
@@ -28,6 +30,14 @@ export async function getTours(filters?: {
 
   if (filters?.destinationLocation) {
     searchParams.set("destinationLocation", filters.destinationLocation);
+  }
+
+  if (filters?.minPrice) {
+    searchParams.set("minPrice", filters.minPrice.toString());
+  }
+
+  if (filters?.maxPrice) {
+    searchParams.set("maxPrice", filters.maxPrice.toString());
   }
 
   const query = searchParams.toString();

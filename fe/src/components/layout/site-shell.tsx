@@ -9,7 +9,7 @@ export function SiteShell({ children }: SiteShellProps) {
   return (
     <div className="app-shell flex min-h-screen flex-col">
       <SiteHeader />
-      <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-8 md:px-8 md:py-10">{children}</main>
+      <main className="mx-auto w-full max-w-7xl flex-1 px-5 py-8 md:px-8 md:py-10">{children}</main>
       <SiteFooter />
     </div>
   );

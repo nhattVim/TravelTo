@@ -5,6 +5,7 @@ import com.nhattVim.TravelTo.tour.dto.TourDetailResponse;
 import com.nhattVim.TravelTo.tour.dto.TourFilterOptionsResponse;
 import com.nhattVim.TravelTo.tour.dto.TourListItemResponse;
 import com.nhattVim.TravelTo.tour.service.TourService;
+import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,9 +28,11 @@ public class TourController {
       @RequestParam(required = false) String provinceCode,
       @RequestParam(required = false) String departureLocation,
       @RequestParam(required = false) String destinationLocation,
+      @RequestParam(required = false) BigDecimal minPrice,
+      @RequestParam(required = false) BigDecimal maxPrice,
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "9") int size) {
-    return tourService.getTours(provinceCode, departureLocation, destinationLocation, page, size);
+    return tourService.getTours(provinceCode, departureLocation, destinationLocation, minPrice, maxPrice, page, size);
   }
 
   @GetMapping("/tours/filters")

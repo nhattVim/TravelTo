@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { SectionTitle } from "@/components/shared/section-title";
-import { TourCard } from "@/components/tours/tour-card";
+import { HorizontalTourCard } from "@/components/tours/horizontal-tour-card";
 import { getTourFilterOptions, getTours } from "@/lib/api/public";
+import { auth } from "@/auth";
 
 interface ToursPageProps {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -15,12 +16,34 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
     typeof resolvedSearchParams.departure === "string" ? resolvedSearchParams.departure : undefined;
   const destination =
     typeof resolvedSearchParams.destination === "string" ? resolvedSearchParams.destination : undefined;
+  const budget =
+    typeof resolvedSearchParams.budget === "string" ? resolvedSearchParams.budget : undefined;
+
+  const session = await auth();
+  const token = session?.backendAccessToken;
+
+  let minPrice: number | undefined = undefined;
+  let maxPrice: number | undefined = undefined;
+
+  if (budget === "<5m") {
+    maxPrice = 5000000;
+  } else if (budget === "5m-10m") {
+    minPrice = 5000000;
+    maxPrice = 10000000;
+  } else if (budget === "10m-20m") {
+    minPrice = 10000000;
+    maxPrice = 20000000;
+  } else if (budget === ">20m") {
+    minPrice = 20000000;
+  }
 
   const [tourData, rawProvinces] = await Promise.all([
     getTours({
       provinceCode: province,
       departureLocation: departure,
       destinationLocation: destination,
+      minPrice,
+      maxPrice,
     }),
     fetch("https://provinces.open-api.vn/api/v2/p/").then((r) => r.json()),
   ]);
@@ -39,9 +62,23 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
       />
 
       <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
-        <aside className="h-fit rounded-3xl border border-[#cbeadf] bg-white p-5 shadow-[0_16px_28px_rgba(12,85,62,0.06)]">
+        <aside className="lg:sticky lg:top-24 relative h-fit rounded-3xl border border-[#cbeadf] bg-white p-5 shadow-[0_16px_28px_rgba(12,85,62,0.06)]">
           <h3 className="text-lg font-semibold text-[#0b3d2f]">Bộ lọc tìm kiếm</h3>
           <form method="get" className="mt-4 space-y-4">
+            <label className="block space-y-2 text-base text-[#2f5b4d]">
+              <span className="font-medium">Ngân sách</span>
+              <select
+                name="budget"
+                defaultValue={budget ?? ""}
+                className="w-full rounded-xl border border-[#98d9c1] bg-white px-3 py-2 text-base outline-none focus:border-[#0a7d59]"
+              >
+                <option value="">Tất cả mức giá</option>
+                <option value="<5m">Dưới 5 triệu</option>
+                <option value="5m-10m">Từ 5 - 10 triệu</option>
+                <option value="10m-20m">Từ 10 - 20 triệu</option>
+                <option value=">20m">Trên 20 triệu</option>
+              </select>
+            </label>
             <label className="block space-y-2 text-base text-[#2f5b4d]">
               <span className="font-medium">Điểm khởi hành</span>
               <select
@@ -90,11 +127,11 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
           </form>
         </aside>
 
-        <section className="space-y-4">
+        <section className="space-y-4 w-full">
           {tourData.items.length > 0 ? (
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-2">
+            <div className="flex flex-col gap-5">
               {tourData.items.map((tour) => (
-                <TourCard key={tour.id} tour={tour} />
+                <HorizontalTourCard key={tour.id} tour={tour} token={token} />
               ))}
             </div>
           ) : (

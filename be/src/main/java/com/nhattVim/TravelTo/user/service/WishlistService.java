@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -29,6 +30,7 @@ public class WishlistService {
     this.tourRepository = tourRepository;
   }
 
+  @Transactional(readOnly = true)
   public PagedResponse<WishlistDto> getMyWishlist(String email, int page, int size) {
     User user = userRepository.findByEmailIgnoreCase(email)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
@@ -44,6 +46,7 @@ public class WishlistService {
         wishlists.getSize());
   }
 
+  @Transactional
   public void addWishlist(String email, Long tourId) {
     User user = userRepository.findByEmailIgnoreCase(email)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
@@ -57,6 +60,7 @@ public class WishlistService {
     wishlistRepository.save(Wishlist.builder().user(user).tour(tour).build());
   }
 
+  @Transactional
   public void removeWishlist(String email, Long tourId) {
     User user = userRepository.findByEmailIgnoreCase(email)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
@@ -64,6 +68,7 @@ public class WishlistService {
     wishlistRepository.findByUserIdAndTourId(user.getId(), tourId).ifPresent(wishlistRepository::delete);
   }
 
+  @Transactional(readOnly = true)
   public Map<String, Boolean> checkStatus(String email, Long tourId) {
     User user = userRepository.findByEmailIgnoreCase(email)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));

@@ -48,6 +48,8 @@ public class TourService {
       String provinceCode,
       String departureLocation,
       String destinationLocation,
+      BigDecimal minPrice,
+      BigDecimal maxPrice,
       int page,
       int size) {
     var pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
@@ -56,6 +58,8 @@ public class TourService {
         provinceCode,
         departureLocation,
         destinationLocation,
+        minPrice,
+        maxPrice,
         pageable);
 
     List<TourListItemResponse> items = tourPage.getContent().stream()
