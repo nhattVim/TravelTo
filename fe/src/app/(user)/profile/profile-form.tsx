@@ -59,11 +59,10 @@ export function ProfileForm({
 
       {message && (
         <div
-          className={`rounded-2xl p-4 text-sm font-medium ${
-            message.type === "success"
+          className={`rounded-2xl p-4 text-sm font-medium ${message.type === "success"
               ? "border border-[#81f0c0] bg-[#eafbf3] text-[#0a7d59]"
               : "border border-[#ff9f9f] bg-[#fff5f5] text-[#d14f4f]"
-          }`}
+            }`}
         >
           {message.text}
         </div>
@@ -150,7 +149,7 @@ export function ProfileForm({
             onChange={(e) => setFormData({ ...formData, address: e.target.value })}
             disabled={loading}
             placeholder="Chưa cập nhật..."
-            className="w-full border-0 bg-transparent px-0 py-2 text-base md:text-lg font-medium text-[#083b2d] transition focus:border-[#0a7d59] focus:outline-none focus:ring-0"
+            className="w-full border-0 bg-transparent px-0 py-2 text-base font-medium text-[#083b2d] transition focus:border-[#0a7d59] focus:outline-none focus:ring-0"
           />
         </div>
       </div>
@@ -159,9 +158,8 @@ export function ProfileForm({
         <button
           type="submit"
           disabled={loading}
-          className={`rounded-2xl px-10 py-3 text-sm font-bold uppercase tracking-widest text-white shadow-md transition ${
-            loading ? "cursor-not-allowed bg-[#8fd5bd]" : "bg-[#0a7d59] hover:bg-[#085a41] hover:shadow-lg"
-          }`}
+          className={`rounded-2xl px-10 py-3 text-sm font-bold uppercase tracking-widest text-white shadow-md transition ${loading ? "cursor-not-allowed bg-[#8fd5bd]" : "bg-[#0a7d59] hover:bg-[#085a41] hover:shadow-lg"
+            }`}
         >
           {loading ? "Đang lưu..." : "Lưu thay đổi"}
         </button>
