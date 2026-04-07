@@ -39,8 +39,10 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
           </div>
         </header>
 
-        <div className="mt-6 grid gap-5 lg:grid-cols-[280px_1fr]">
-          <AdminSidebar />
+        <div className="mt-6 grid gap-5 lg:grid-cols-[280px_1fr] items-start">
+          <div className="lg:sticky lg:top-8 h-fit">
+            <AdminSidebar />
+          </div>
           <main className="rounded-3xl border border-[#cdece0] bg-white p-5 shadow-[0_20px_45px_rgba(9,88,61,0.08)] md:p-7">
             {children}
           </main>

@@ -7,6 +7,7 @@ interface UserSidebarProps {
   user: {
     name?: string | null;
     email?: string | null;
+    image?: string | null;
   };
 }
 
@@ -18,8 +19,12 @@ export function UserSidebar({ user }: UserSidebarProps) {
   return (
     <aside className="space-y-6">
       <div className="flex items-center gap-4 rounded-3xl border border-[#cbeadf] bg-white p-5 shadow-[0_8px_16px_rgba(12,85,62,0.03)] lg:p-6">
-        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-[#0a7d59] text-2xl font-bold text-white shadow-inner">
-          {user.name?.charAt(0)?.toUpperCase()}
+        <div className="flex h-12 w-12 overflow-hidden flex-shrink-0 items-center justify-center rounded-full bg-[#0a7d59] text-2xl font-bold text-white shadow-inner">
+          {user.image ? (
+            <img src={user.image} alt={user.name || "Avatar"} className="h-full w-full object-cover" />
+          ) : (
+            user.name?.charAt(0)?.toUpperCase()
+          )}
         </div>
         <div className="overflow-hidden">
           <h3 className="truncate font-semibold text-[#083b2d]">{user.name}</h3>

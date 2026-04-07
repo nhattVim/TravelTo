@@ -29,8 +29,12 @@ export async function SiteHeader() {
         {session?.user ? (
           <div className="group relative">
             <Link href="/profile" className="flex cursor-pointer items-center gap-3 py-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0a7d59] font-bold text-white shadow-sm ring-2 ring-[#e4fff4] transition group-hover:ring-[#0a7d59]">
-                {session.user.name?.charAt(0)?.toUpperCase()}
+              <div className="flex overflow-hidden h-9 w-9 items-center justify-center rounded-full bg-[#0a7d59] font-bold text-white shadow-sm ring-2 ring-[#e4fff4] transition group-hover:ring-[#0a7d59]">
+                {session?.user?.image ? (
+                  <img src={session.user.image} alt={session.user.name || "Avatar"} className="h-full w-full object-cover" />
+                ) : (
+                  session?.user?.name?.charAt(0)?.toUpperCase()
+                )}
               </div>
               <span className="hidden text-base font-semibold text-[#1c4d3f] transition group-hover:text-[#0a7d59] md:block">
                 {session.user.name}
