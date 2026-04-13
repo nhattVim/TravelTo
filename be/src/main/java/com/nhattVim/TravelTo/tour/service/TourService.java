@@ -62,8 +62,11 @@ public class TourService {
         maxPrice,
         pageable);
 
+    List<Long> tourIds = tourPage.getContent().stream().map(Tour::getId).toList();
+    java.util.Map<Long, List<String>> departuresMap = fetchNextDeparturesMap(tourIds);
+
     List<TourListItemResponse> items = tourPage.getContent().stream()
-        .map(this::toListItem)
+        .map(tour -> toListItem(tour, departuresMap.getOrDefault(tour.getId(), new ArrayList<>())))
         .toList();
 
     return new PagedResponse<>(items, tourPage.getTotalElements(), tourPage.getTotalPages(), page, size);
@@ -202,12 +205,29 @@ public class TourService {
 
   @Transactional(readOnly = true)
   public List<TourListItemResponse> getHighlights() {
-    return tourRepository.findTop6ByStatusOrderByCreatedAtDesc(TourStatus.PUBLISHED).stream()
-        .map(this::toListItem)
+    List<Tour> tours = tourRepository.findTop6ByStatusOrderByCreatedAtDesc(TourStatus.PUBLISHED);
+    List<Long> tourIds = tours.stream().map(Tour::getId).toList();
+    java.util.Map<Long, List<String>> departuresMap = fetchNextDeparturesMap(tourIds);
+    
+    return tours.stream()
+        .map(tour -> toListItem(tour, departuresMap.getOrDefault(tour.getId(), new ArrayList<>())))
         .toList();
   }
 
-  private TourListItemResponse toListItem(Tour tour) {
+  private java.util.Map<Long, List<String>> fetchNextDeparturesMap(List<Long> tourIds) {
+    if (tourIds == null || tourIds.isEmpty()) {
+      return new java.util.HashMap<>();
+    }
+    List<TourDeparture> allDepartures = tourDepartureRepository
+        .findByTour_IdInAndDepartureDateGreaterThanEqualOrderByDepartureDateAsc(tourIds, LocalDate.now());
+    return allDepartures.stream()
+        .collect(java.util.stream.Collectors.groupingBy(
+            d -> d.getTour().getId(),
+            java.util.stream.Collectors.mapping(d -> d.getDepartureDate().toString(), java.util.stream.Collectors.toList())
+        ));
+  }
+
+  private TourListItemResponse toListItem(Tour tour, List<String> nextDepartures) {
     return new TourListItemResponse(
         tour.getId(),
         tour.getTitle(),
@@ -220,7 +240,8 @@ public class TourService {
         tour.getProvinceName(),
         tour.getDepartureLocation(),
         tour.getDestinationLocation(),
-        tour.getSlotsAvailable());
+        tour.getSlotsAvailable(),
+        nextDepartures);
   }
 
   private AdminTourListItemResponse toAdminListItem(Tour tour) {

@@ -127,7 +127,7 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
           </form>
         </aside>
 
-        <section className="space-y-4 w-full">
+        <section className="space-y-4 w-full min-w-0">
           {tourData.items.length > 0 ? (
             <div className="flex flex-col gap-5">
               {tourData.items.map((tour) => (

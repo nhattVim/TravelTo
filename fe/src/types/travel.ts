@@ -34,6 +34,7 @@ export interface TourItem {
   departureLocation: string;
   destinationLocation: string;
   slotsAvailable: number;
+  nextDepartures?: string[];
 }
 
 export interface TourDetail {

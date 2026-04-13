@@ -14,5 +14,6 @@ public record TourListItemResponse(
         String provinceName,
         String departureLocation,
         String destinationLocation,
-        int slotsAvailable) {
+        int slotsAvailable,
+        java.util.List<String> nextDepartures) {
 }

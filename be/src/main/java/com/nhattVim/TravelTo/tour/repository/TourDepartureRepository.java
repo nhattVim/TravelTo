@@ -18,4 +18,7 @@ public interface TourDepartureRepository extends JpaRepository<TourDeparture, Lo
 
   List<TourDeparture> findByTour_IdAndDepartureDateGreaterThanEqualOrderByDepartureDateAsc(Long tourId,
       LocalDate fromDate);
+
+  List<TourDeparture> findByTour_IdInAndDepartureDateGreaterThanEqualOrderByDepartureDateAsc(java.util.Collection<Long> tourIds,
+      LocalDate fromDate);
 }

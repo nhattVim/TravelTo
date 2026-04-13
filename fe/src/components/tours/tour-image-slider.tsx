@@ -29,7 +29,7 @@ export function TourImageSlider({ images, title }: TourImageSliderProps) {
 
   return (
     <div className="space-y-3">
-      <div className="relative h-72 overflow-hidden rounded-3xl border border-[#cdece0] bg-white md:h-104">
+      <div className="relative h-72 overflow-hidden rounded-3xl border border-[#cdece0] bg-white md:h-120">
         <Image
           src={normalizedImages[activeIndex]}
           alt={`${title} - ảnh ${activeIndex + 1}`}
