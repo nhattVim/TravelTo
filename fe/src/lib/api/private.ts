@@ -40,6 +40,18 @@ export async function createBooking(
   });
 }
 
+export async function submitPaymentOrder(
+  token: string,
+  payload: { tourId: number; departureId: number; guests: number; contactName: string; contactPhone: string; contactNotes: string },
+): Promise<{ paymentUrl: string }> {
+  return apiFetch<{ paymentUrl: string }>("/api/v1/payment/vnpay/submit-order", {
+    method: "POST",
+    headers: authHeaders(token),
+    body: JSON.stringify(payload),
+    cache: "no-store",
+  });
+}
+
 export async function getAdminBookings(token: string): Promise<Booking[]> {
   return apiFetch<Booking[]>("/api/v1/admin/bookings", {
     headers: authHeaders(token),

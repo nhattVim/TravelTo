@@ -16,5 +16,8 @@ public record BookingResponse(
         String status,
         Instant createdAt,
         String customerEmail,
-        String customerName) {
+        String customerName,
+        String contactName,
+        String contactPhone,
+        String contactNotes) {
 }

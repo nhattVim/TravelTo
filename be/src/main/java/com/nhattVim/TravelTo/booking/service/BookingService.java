@@ -69,6 +69,9 @@ public class BookingService {
         .travelDate(departure.getDepartureDate())
         .guests(request.guests())
         .totalPrice(departure.getPrice().multiply(java.math.BigDecimal.valueOf(request.guests())))
+        .contactName(request.contactName())
+        .contactPhone(request.contactPhone())
+        .contactNotes(request.contactNotes())
         .status(BookingStatus.PENDING)
         .build();
 
@@ -150,6 +153,9 @@ public class BookingService {
         booking.getStatus().name(),
         booking.getCreatedAt(),
         booking.getUser().getEmail(),
-        booking.getUser().getFullName());
+        booking.getUser().getFullName(),
+        booking.getContactName(),
+        booking.getContactPhone(),
+        booking.getContactNotes());
   }
 }

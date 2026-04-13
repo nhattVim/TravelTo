@@ -57,6 +57,15 @@ public class Booking extends BaseAuditEntity {
   @Column(nullable = false, precision = 12, scale = 2)
   private BigDecimal totalPrice;
 
+  @Column(length = 255)
+  private String contactName;
+
+  @Column(length = 20)
+  private String contactPhone;
+
+  @Column(length = 1000)
+  private String contactNotes;
+
   @Enumerated(EnumType.STRING)
   @Column(nullable = false, length = 20)
   private BookingStatus status;

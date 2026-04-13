@@ -112,7 +112,9 @@ export function TourDepartureCalendar({ tourId, departures, initialDate }: TourD
     return map;
   }, [monthDepartures]);
 
-  const effectiveSelectedDepartureId = selectedDepartureId;
+  const [localSelectedId, setLocalSelectedId] = useState<number | null>(selectedDepartureId);
+
+  const effectiveSelectedDepartureId = localSelectedId;
 
   const selectedDeparture =
     monthDepartures.find((item) => item.id === effectiveSelectedDepartureId) ?? null;
@@ -132,6 +134,50 @@ export function TourDepartureCalendar({ tourId, departures, initialDate }: TourD
     <section className="space-y-5 rounded-3xl border border-[#ccebe0] bg-white p-6 md:p-8">
       <h2 className="text-3xl font-bold text-[#083b2d]">Lịch khởi hành</h2>
 
+      {selectedDeparture ? (
+        <div className="rounded-2xl border border-[#dbf2e9] bg-[#f8fff9] p-6 animate-in slide-in-from-bottom-4 fade-in duration-300">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#dbf2e9] pb-4">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#0a7d59]">Ngày khởi hành đã chọn</p>
+              <p className="text-2xl font-bold text-[#083b2d] mt-1">{formatDateVi(selectedDeparture.departureDate)}</p>
+            </div>
+            <button
+              onClick={() => setLocalSelectedId(null)}
+              className="text-sm font-semibold text-[#0a7d59] hover:underline whitespace-nowrap"
+            >
+              ← Chọn ngày khác
+            </button>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-6 mt-6">
+            <div className="space-y-3">
+              <div className="flex justify-between items-center rounded-xl bg-white p-4 shadow-sm border border-[#eafbf3]">
+                <span className="text-base text-[#285447] font-medium">Người lớn</span>
+                <span className="text-xl font-bold text-[#db2200]">{formatCurrencyVnd(selectedDeparture.price)}</span>
+              </div>
+              <div className="flex justify-between items-center rounded-xl bg-white p-4 shadow-sm border border-[#eafbf3]">
+                <span className="text-base text-[#285447] font-medium">Số chỗ còn nhận</span>
+                <span className="text-lg font-bold text-[#0a7d59]">{selectedDeparture.slotsAvailable} chỗ</span>
+              </div>
+            </div>
+            
+            <div className="flex flex-col justify-end">
+              {selectedDeparture.slotsAvailable > 0 ? (
+                <Link
+                  href={`/checkout/${tourId}?departureId=${selectedDeparture.id}`}
+                  className="w-full rounded-2xl bg-[#0a7d59] px-6 py-4 text-center text-lg font-bold text-white transition hover:bg-[#085a41] shadow-[0_8px_20px_rgba(10,125,89,0.2)] hover:-translate-y-1"
+                >
+                  Đặt ngay
+                </Link>
+              ) : (
+                <button disabled className="w-full rounded-2xl bg-[#cbdad4] px-6 py-4 text-center text-lg font-bold text-white cursor-not-allowed">
+                  Đã hết chỗ
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : (
       <div className="grid gap-4 lg:grid-cols-[140px_1fr]">
         <div className="rounded-2xl border border-[#dbf2e9] bg-[#f8fff9] p-3">
           <p className="px-2 text-sm font-semibold uppercase tracking-[0.2em] text-[#0a7d59]">Chọn tháng</p>
@@ -189,7 +235,7 @@ export function TourDepartureCalendar({ tourId, departures, initialDate }: TourD
                 <button
                   key={`day-${day}`}
                   type="button"
-                  onClick={() => router.push(`?date=${departure.departureDate}#lich-khoi-hanh`, { scroll: false })}
+                  onClick={() => setLocalSelectedId(departure.id)}
                   className={`aspect-square rounded-lg border flex flex-col items-center justify-center p-1 transition ${isSelected
                     ? "border-[#0a7d59] bg-[#e7fff4] shadow-sm transform scale-105 z-10"
                     : "border-[#bde6d6] bg-white hover:border-[#0a7d59] hover:shadow-md hover:-translate-y-1"
@@ -203,6 +249,7 @@ export function TourDepartureCalendar({ tourId, departures, initialDate }: TourD
           </div>
         </div>
       </div>
+      )}
 
     </section>
   );

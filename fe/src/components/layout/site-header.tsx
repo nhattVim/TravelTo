@@ -1,6 +1,7 @@
-import Link from "next/link";
 import { auth } from "@/auth";
 import { signOutAction } from "@/lib/auth-actions";
+import Image from "next/image";
+import Link from "next/link";
 
 const links = [
   { href: "/", label: "Trang chủ" },
@@ -31,7 +32,7 @@ export async function SiteHeader() {
             <Link href="/profile" className="flex cursor-pointer items-center gap-3 py-2">
               <div className="flex overflow-hidden h-9 w-9 items-center justify-center rounded-full bg-[#0a7d59] font-bold text-white shadow-sm ring-2 ring-[#e4fff4] transition group-hover:ring-[#0a7d59]">
                 {session?.user?.image ? (
-                  <img src={session.user.image} alt={session.user.name || "Avatar"} className="h-full w-full object-cover" />
+                  <Image src={session.user.image} alt={session.user.name || "Avatar"} width={36} height={36} className="h-full w-full object-cover" />
                 ) : (
                   session?.user?.name?.charAt(0)?.toUpperCase()
                 )}
@@ -41,7 +42,7 @@ export async function SiteHeader() {
               </span>
             </Link>
 
-            <div className="absolute right-0 top-[100%] hidden w-52 flex-col overflow-hidden rounded-2xl border border-[#cdece0] bg-white p-2 shadow-[0_12px_24px_rgba(10,125,89,0.1)] group-hover:flex">
+            <div className="absolute right-0 top-full hidden w-52 flex-col overflow-hidden rounded-2xl border border-[#cdece0] bg-white p-2 shadow-[0_12px_24px_rgba(10,125,89,0.1)] group-hover:flex">
               <Link
                 href="/profile"
                 className="rounded-xl px-4 py-2.5 text-base font-medium text-[#26584a] transition hover:bg-[#e4fff4] hover:text-[#0a7d59]"
