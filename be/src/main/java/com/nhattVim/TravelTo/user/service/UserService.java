@@ -80,6 +80,14 @@ public class UserService {
   }
 
   @Transactional
+  public void updatePasswordByEmail(String email, String newPassword) {
+    User user = userRepository.findByEmailIgnoreCase(email)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    user.setPasswordHash(passwordEncoder.encode(newPassword));
+    userRepository.save(user);
+  }
+
+  @Transactional
   public void deleteAccount(String email) {
     User user = userRepository.findByEmailIgnoreCase(email)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));

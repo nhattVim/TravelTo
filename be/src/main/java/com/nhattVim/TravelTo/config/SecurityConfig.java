@@ -18,7 +18,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class SecurityConfig {
 
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -36,7 +36,7 @@ public class SecurityConfig {
         .cors(Customizer.withDefaults())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/v1/auth/google", "/api/v1/auth/login")
+            .requestMatchers("/api/v1/auth/google", "/api/v1/auth/login", "/api/v1/auth/forgot-password", "/api/v1/auth/verify-reset-code", "/api/v1/auth/reset-password")
             .permitAll()
             .requestMatchers("/api/v1/auth/**").authenticated()
             .requestMatchers("/api/v1/provinces/**", "/api/v1/tours/**", "/api/v1/home/**")

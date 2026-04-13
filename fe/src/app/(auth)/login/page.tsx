@@ -85,7 +85,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       </form>
 
       <p className="mt-5 text-center text-sm text-[#3b6356]">
-        Chưa muốn đăng nhập? <Link href="/" className="font-semibold text-[#0a7d59] hover:underline">Về trang chủ</Link>
+        <Link href="/forgot-password" className="font-semibold text-[#0a7d59] hover:underline">
+          Quên mật khẩu?
+        </Link>
       </p>
     </div>
   );

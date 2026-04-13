@@ -4,6 +4,18 @@ import Google from "next-auth/providers/google";
 import { exchangeGoogleToken, loginWithEmailPassword } from "@/lib/api/auth";
 import { BackendAuthResponse, UserRole } from "@/types/travel";
 
+function isTokenExpired(token: string) {
+  try {
+    const payloadBase64 = token.split(".")[1];
+    const payloadJson = Buffer.from(payloadBase64, "base64").toString("utf-8");
+    const payload = JSON.parse(payloadJson);
+    if (!payload.exp) return false;
+    return payload.exp * 1000 < Date.now();
+  } catch {
+    return true;
+  }
+}
+
 interface SessionUserPayload {
   id: string;
   role: UserRole;
@@ -74,6 +86,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   session: {
     strategy: "jwt",
+    maxAge: 24 * 60 * 60,
   },
   callbacks: {
     async signIn({ account }) {
@@ -112,6 +125,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return token;
     },
     async session({ session, token }) {
+      const backendToken = typeof token.backendAccessToken === "string" ? token.backendAccessToken : undefined;
+
+      if (backendToken && isTokenExpired(backendToken)) {
+        session.user = undefined as any;
+        session.backendAccessToken = undefined;
+        return session;
+      }
+
       if (session.user) {
         session.user.id = typeof token.userId === "string" ? token.userId : "";
         session.user.role = token.role === "ADMIN" || token.role === "USER" ? token.role : undefined;
@@ -122,8 +143,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
         session.user.passwordConfigured = token.passwordConfigured === true;
       }
-      session.backendAccessToken =
-        typeof token.backendAccessToken === "string" ? token.backendAccessToken : undefined;
+      session.backendAccessToken = backendToken;
       return session;
     },
   },

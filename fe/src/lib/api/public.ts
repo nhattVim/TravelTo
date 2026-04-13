@@ -66,3 +66,17 @@ export async function getTourDetail(id: number): Promise<TourDetail> {
     next: { revalidate: 60 },
   });
 }
+
+export async function requestPasswordReset(email: string): Promise<{ success: boolean; message: string }> {
+  return apiFetch<{ success: boolean; message: string }>("/api/v1/auth/forgot-password", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+}
+
+export async function resetPasswordWithOtp(email: string, otp: string, newPassword: string, confirmPassword: string): Promise<{ success: boolean; message: string }> {
+  return apiFetch<{ success: boolean; message: string }>("/api/v1/auth/reset-password", {
+    method: "POST",
+    body: JSON.stringify({ email, code: otp, newPassword, confirmPassword }),
+  });
+}
