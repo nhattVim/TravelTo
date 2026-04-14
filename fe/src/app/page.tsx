@@ -4,6 +4,7 @@ import { HeroBanner } from "@/components/home/hero-banner";
 import { SectionTitle } from "@/components/shared/section-title";
 import { SiteShell } from "@/components/layout/site-shell";
 import { TourCard } from "@/components/tours/tour-card";
+import { DestinationsSection } from "@/components/home/destinations-section";
 import { getHighlights } from "@/lib/api/public";
 
 export default async function HomePage() {
@@ -38,6 +39,8 @@ export default async function HomePage() {
             </div>
           )}
         </section>
+
+        <DestinationsSection />
 
         <section className="rounded-3xl border border-[#cdece0] bg-white px-6 py-8 md:px-10">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
