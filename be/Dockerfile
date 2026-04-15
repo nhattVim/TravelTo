@@ -31,6 +31,6 @@ USER appuser
 EXPOSE ${PORT}
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=20s --retries=3 \
-  CMD curl -f http://localhost:${PORT}/actuator/health || exit 1
+    CMD curl -f http://localhost:${PORT}/actuator/health || exit 1
 
 ENTRYPOINT ["java", "-XX:InitialRAMPercentage=30.0", "-XX:MaxRAMPercentage=75.0", "-jar", "app.jar"]
