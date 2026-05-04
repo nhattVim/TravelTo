@@ -49,4 +49,12 @@ public class TourController {
   List<TourListItemResponse> getHighlights() {
     return tourService.getHighlights();
   }
+
+  @GetMapping("/tours/{id}/related")
+  PagedResponse<TourListItemResponse> getRelatedTours(
+      @PathVariable Long id,
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "4") int size) {
+    return tourService.getRelatedTours(id, page, size);
+  }
 }

@@ -31,6 +31,21 @@ public class EmailService {
     }
   }
 
+  @Async
+  public void sendHtmlEmail(String to, String subject, String htmlBody) {
+    try {
+      jakarta.mail.internet.MimeMessage message = javaMailSender.createMimeMessage();
+      org.springframework.mail.javamail.MimeMessageHelper helper = new org.springframework.mail.javamail.MimeMessageHelper(message, true, "UTF-8");
+      helper.setTo(to);
+      helper.setSubject(subject);
+      helper.setText(htmlBody, true); // true indicates HTML
+      javaMailSender.send(message);
+      logger.info("Sent HTML email to {}", to);
+    } catch (Exception e) {
+      logger.error("Failed to send HTML email to {}", to, e);
+    }
+  }
+
   public void sendPasswordResetCode(String email, String code) {
     String text = "Lưu ý không chia sẻ mã này cho bất kỳ ai.\n"
         + "Mã OTP để khôi phục mật khẩu tài khoản TravelTo của bạn là: " + code + "\n"

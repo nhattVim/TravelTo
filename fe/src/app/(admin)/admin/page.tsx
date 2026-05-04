@@ -1,21 +1,27 @@
 import Link from "next/link";
 import { auth } from "@/auth";
-import { getAdminBookings } from "@/lib/api/private";
-import { getTours } from "@/lib/api/public";
+import { getDashboardStats } from "@/lib/api/private";
+import { RevenueChart } from "@/components/admin/revenue-chart";
 
 export default async function AdminDashboardPage() {
   const session = await auth();
   const token = session?.backendAccessToken;
 
-  const [bookings, tours] = await Promise.all([
-    token ? getAdminBookings(token).catch(() => []) : Promise.resolve([]),
-    getTours().catch(() => ({ items: [], totalElements: 0, totalPages: 0, page: 0, size: 9 })),
-  ]);
+  let stats = null;
+  if (token) {
+    try {
+      stats = await getDashboardStats(token);
+    } catch (e) {
+      console.error("Failed to fetch dashboard stats", e);
+    }
+  }
 
-  const pendingCount = bookings.filter((item) => item.status === "PENDING").length;
-  const confirmedCount = bookings.filter((item) => item.status === "CONFIRMED").length;
-  const cancelledCount = bookings.filter((item) => item.status === "CANCELLED").length;
-  const uniqueCustomerCount = new Set(bookings.map((item) => item.customerEmail.toLowerCase())).size;
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(value);
+  };
 
   return (
     <div className="space-y-7">
@@ -27,24 +33,36 @@ export default async function AdminDashboardPage() {
         </p>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <article className="rounded-2xl border border-[#cdece0] bg-[#f8fffb] p-4">
-          <p className="text-sm uppercase tracking-[0.16em] text-[#0a7d59]">Tổng booking</p>
-          <p className="mt-2 text-4xl font-semibold text-[#083b2d]">{bookings.length}</p>
-        </article>
-        <article className="rounded-2xl border border-[#cdece0] bg-[#f8fffb] p-4">
-          <p className="text-sm uppercase tracking-[0.16em] text-[#0a7d59]">Booking chờ xử lí</p>
-          <p className="mt-2 text-4xl font-semibold text-[#ffd166]">{pendingCount}</p>
-        </article>
-        <article className="rounded-2xl border border-[#cdece0] bg-[#f8fffb] p-4">
-          <p className="text-sm uppercase tracking-[0.16em] text-[#0a7d59]">Tour đang mở</p>
-          <p className="mt-2 text-4xl font-semibold text-[#7cf4c4]">{tours.totalElements}</p>
-        </article>
-        <article className="rounded-2xl border border-[#cdece0] bg-[#f8fffb] p-4">
-          <p className="text-sm uppercase tracking-[0.16em] text-[#0a7d59]">Khách hàng phát sinh đơn</p>
-          <p className="mt-2 text-4xl font-semibold text-[#92c0ff]">{uniqueCustomerCount}</p>
-        </article>
-      </section>
+      {stats ? (
+        <>
+          <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <article className="rounded-2xl border border-[#cdece0] bg-[#f8fffb] p-4">
+              <p className="text-sm uppercase tracking-[0.16em] text-[#0a7d59]">Tổng doanh thu</p>
+              <p className="mt-2 text-3xl font-semibold text-[#083b2d]">{formatCurrency(stats.totalRevenue || 0)}</p>
+            </article>
+            <article className="rounded-2xl border border-[#cdece0] bg-[#f8fffb] p-4">
+              <p className="text-sm uppercase tracking-[0.16em] text-[#0a7d59]">Tổng booking</p>
+              <p className="mt-2 text-4xl font-semibold text-[#083b2d]">{stats.totalBookings}</p>
+            </article>
+            <article className="rounded-2xl border border-[#cdece0] bg-[#f8fffb] p-4">
+              <p className="text-sm uppercase tracking-[0.16em] text-[#0a7d59]">Người dùng</p>
+              <p className="mt-2 text-4xl font-semibold text-[#92c0ff]">{stats.totalUsers}</p>
+            </article>
+            <article className="rounded-2xl border border-[#cdece0] bg-[#f8fffb] p-4">
+              <p className="text-sm uppercase tracking-[0.16em] text-[#0a7d59]">Tour đang mở</p>
+              <p className="mt-2 text-4xl font-semibold text-[#7cf4c4]">{stats.totalTours}</p>
+            </article>
+          </section>
+
+          <section>
+            <RevenueChart data={stats.monthlyRevenue || []} />
+          </section>
+        </>
+      ) : (
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-600">
+          Không thể tải dữ liệu thống kê. Vui lòng kiểm tra lại kết nối hoặc đăng nhập lại.
+        </div>
+      )}
 
       <section className="grid gap-4 lg:grid-cols-3">
         <Link href="/admin/users" className="rounded-2xl border border-[#cdece0] bg-white p-5 transition hover:border-[#9ad9bf] hover:bg-[#f5fff9]">
@@ -66,23 +84,21 @@ export default async function AdminDashboardPage() {
         </Link>
       </section>
 
-      <section className="rounded-2xl border border-[#cdece0] bg-white p-5">
-        <h3 className="text-xl font-semibold text-[#083b2d]">Tình trạng booking</h3>
-        <div className="mt-4 grid gap-3 md:grid-cols-3">
-          <div className="rounded-xl border border-[#e1f3eb] bg-[#f7fffb] p-4">
-            <p className="text-sm uppercase tracking-wide text-[#0a7d59]">Pending</p>
-            <p className="mt-1 text-3xl font-semibold text-[#ffd166]">{pendingCount}</p>
+      {stats && (
+        <section className="rounded-2xl border border-[#cdece0] bg-white p-5">
+          <h3 className="text-xl font-semibold text-[#083b2d]">Tình trạng booking</h3>
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            <div className="rounded-xl border border-[#e1f3eb] bg-[#f7fffb] p-4">
+              <p className="text-sm uppercase tracking-wide text-[#0a7d59]">Chờ xác nhận (Pending)</p>
+              <p className="mt-1 text-3xl font-semibold text-[#ffd166]">{stats.pendingBookings}</p>
+            </div>
+            <div className="rounded-xl border border-[#e1f3eb] bg-[#f7fffb] p-4">
+              <p className="text-sm uppercase tracking-wide text-[#0a7d59]">Đã hoàn thành (Completed)</p>
+              <p className="mt-1 text-3xl font-semibold text-[#78f5bf]">{stats.completedBookings}</p>
+            </div>
           </div>
-          <div className="rounded-xl border border-[#e1f3eb] bg-[#f7fffb] p-4">
-            <p className="text-sm uppercase tracking-wide text-[#0a7d59]">Confirmed</p>
-            <p className="mt-1 text-3xl font-semibold text-[#78f5bf]">{confirmedCount}</p>
-          </div>
-          <div className="rounded-xl border border-[#e1f3eb] bg-[#f7fffb] p-4">
-            <p className="text-sm uppercase tracking-wide text-[#0a7d59]">Cancelled</p>
-            <p className="mt-1 text-3xl font-semibold text-[#ff9f9f]">{cancelledCount}</p>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }

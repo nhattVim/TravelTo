@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { formatCurrencyVnd, formatDateVi } from "@/lib/format";
-import { getTourDetail } from "@/lib/api/public";
+import { getTourDetail, getRelatedTours } from "@/lib/api/public";
 import { TourDepartureCalendar } from "@/components/tours/tour-departure-calendar";
 import { TourImageSlider } from "@/components/tours/tour-image-slider";
+import { TourReviews } from "@/components/tours/tour-reviews";
+import { RelatedTours } from "@/components/tours/related-tours";
 import { auth } from "@/auth";
 import { checkWishlistStatus } from "@/lib/api/private";
 import { FavoriteButton } from "@/components/tours/favorite-button";
@@ -27,6 +29,9 @@ export default async function TourDetailPage({ params, searchParams }: TourDetai
   if (!tour) {
     notFound();
   }
+  
+  const relatedToursResponse = await getRelatedTours(numericId).catch(() => null);
+  const relatedTours = relatedToursResponse?.items || [];
 
   const selectedDeparture = tour.departures?.find(d => d.departureDate === dateFromUrl) ?? null;
 
@@ -180,6 +185,12 @@ export default async function TourDetailPage({ params, searchParams }: TourDetai
           <p className="mt-2">{additionalInfo.notes || "Lịch trình thực tế có thể thay đổi theo điều kiện thời tiết và vận hành."}</p>
         </article>
       </section>
+
+      <section className="space-y-6 rounded-3xl border border-[#cdece0] bg-white p-6 md:p-8">
+        <TourReviews tourId={tour.id} token={token} />
+      </section>
+
+      <RelatedTours tours={relatedTours} token={token} />
     </div>
   );
 }

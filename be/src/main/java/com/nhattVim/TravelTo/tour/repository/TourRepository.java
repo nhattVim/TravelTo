@@ -53,4 +53,6 @@ public interface TourRepository extends JpaRepository<Tour, Long> {
       ORDER BY t.destinationLocation ASC
       """)
   List<String> findDistinctDestinationLocations(@Param("status") TourStatus status);
+
+  Page<Tour> findByProvinceCodeAndStatusAndIdNot(String provinceCode, TourStatus status, Long id, Pageable pageable);
 }

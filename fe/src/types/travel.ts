@@ -215,3 +215,55 @@ export interface WishlistDto {
   tourPrice: number;
   tourImageUrl: string;
 }
+
+export interface ReviewUserDto {
+  id: number;
+  fullName: string;
+  avatarUrl: string | null;
+}
+
+export interface ReviewResponse {
+  id: number;
+  rating: number | null;
+  comment: string;
+  createdAt: string;
+  user: ReviewUserDto;
+  replies?: ReviewResponse[];
+}
+
+export interface ReviewRequest {
+  rating?: number;
+  comment: string;
+  parentId?: number;
+}
+
+export interface DashboardStatsDto {
+  totalRevenue: number;
+  totalBookings: number;
+  pendingBookings: number;
+  completedBookings: number;
+  totalUsers: number;
+  totalTours: number;
+  monthlyRevenue: MonthlyRevenueDto[];
+}
+
+export interface MonthlyRevenueDto {
+  month: string;
+  revenue: number;
+  bookingCount: number;
+}
+
+export interface NotificationSenderDto {
+  id: number;
+  fullName: string;
+  avatarUrl: string | null;
+}
+
+export interface NotificationDto {
+  id: number;
+  message: string;
+  relatedUrl: string;
+  isRead: boolean;
+  createdAt: string;
+  sender: NotificationSenderDto | null;
+}

@@ -450,4 +450,19 @@ public class TourService {
         departure.getSlotsTotal(),
         departure.getSlotsAvailable());
   }
+
+  public PagedResponse<TourListItemResponse> getRelatedTours(Long tourId, int page, int size) {
+    Tour tour = findTourOrThrow(tourId);
+    PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+    Page<Tour> tours = tourRepository.findByProvinceCodeAndStatusAndIdNot(tour.getProvinceCode(), TourStatus.PUBLISHED, tour.getId(), pageRequest);
+    
+    List<Long> tourIds = tours.getContent().stream().map(Tour::getId).toList();
+    java.util.Map<Long, List<String>> departuresMap = fetchNextDeparturesMap(tourIds);
+    
+    List<TourListItemResponse> items = tours.getContent().stream()
+        .map(t -> toListItem(t, departuresMap.getOrDefault(t.getId(), new ArrayList<>())))
+        .toList();
+        
+    return new PagedResponse<>(items, tours.getTotalElements(), tours.getTotalPages(), page, size);
+  }
 }

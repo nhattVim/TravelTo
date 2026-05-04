@@ -12,6 +12,9 @@ import {
   UserProfileUpdateRequest,
   UserRole,
   WishlistDto,
+  ReviewRequest,
+  ReviewResponse,
+  DashboardStatsDto
 } from "@/types/travel";
 import { apiFetch } from "@/lib/api/client";
 
@@ -272,6 +275,57 @@ export async function removeWishlist(token: string, tourId: number): Promise<voi
 
 export async function checkWishlistStatus(token: string, tourId: number): Promise<{ isWished: boolean }> {
   return apiFetch<{ isWished: boolean }>(`/api/v1/wishlists/tours/${tourId}/status`, {
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+}
+
+export async function getDashboardStats(token: string): Promise<DashboardStatsDto> {
+  return apiFetch<DashboardStatsDto>("/api/v1/admin/dashboard/stats", {
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+}
+
+export async function createTourReview(
+  token: string,
+  tourId: number,
+  payload: ReviewRequest
+): Promise<ReviewResponse> {
+  return apiFetch<ReviewResponse>(`/api/v1/tours/${tourId}/reviews`, {
+    method: "POST",
+    headers: authHeaders(token),
+    body: JSON.stringify(payload),
+    cache: "no-store",
+  });
+}
+
+// Notifications
+export async function getNotifications(
+  token: string,
+  params?: { page?: number; size?: number }
+): Promise<PagedResponse<any>> {
+  const searchParams = new URLSearchParams();
+  if (typeof params?.page === "number") searchParams.set("page", String(params.page));
+  if (typeof params?.size === "number") searchParams.set("size", String(params.size));
+  const query = searchParams.toString();
+  const path = query ? `/api/v1/notifications?${query}` : "/api/v1/notifications";
+  return apiFetch<PagedResponse<any>>(path, {
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+}
+
+export async function getUnreadNotificationCount(token: string): Promise<{ unreadCount: number }> {
+  return apiFetch<{ unreadCount: number }>("/api/v1/notifications/unread-count", {
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+}
+
+export async function markNotificationRead(token: string, id: number): Promise<void> {
+  return apiFetch<void>(`/api/v1/notifications/${id}/read`, {
+    method: "PUT",
     headers: authHeaders(token),
     cache: "no-store",
   });

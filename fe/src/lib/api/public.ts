@@ -1,4 +1,4 @@
-import { PagedResponse, TourDetail, TourFilterOptions, TourItem } from "@/types/travel";
+import { PagedResponse, TourDetail, TourFilterOptions, TourItem, ReviewResponse } from "@/types/travel";
 import { apiFetch } from "@/lib/api/client";
 
 export async function getHighlights(): Promise<TourItem[]> {
@@ -64,6 +64,18 @@ export async function getTourFilterOptions(): Promise<TourFilterOptions> {
 export async function getTourDetail(id: number): Promise<TourDetail> {
   return apiFetch<TourDetail>(`/api/v1/tours/${id}`, {
     next: { revalidate: 60 },
+  });
+}
+
+export async function getRelatedTours(id: number): Promise<PagedResponse<TourItem>> {
+  return apiFetch<PagedResponse<TourItem>>(`/api/v1/tours/${id}/related`, {
+    next: { revalidate: 60 },
+  });
+}
+
+export async function getTourReviews(id: number, page: number = 0, size: number = 10): Promise<PagedResponse<ReviewResponse>> {
+  return apiFetch<PagedResponse<ReviewResponse>>(`/api/v1/tours/${id}/reviews?page=${page}&size=${size}`, {
+    cache: 'no-store'
   });
 }
 
