@@ -21,6 +21,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
   List<Booking> findByStatus(BookingStatus status);
 
+  List<Booking> findByStatusAndCreatedAtBefore(BookingStatus status, java.time.Instant expiryTime);
+
   @Query("SELECT b FROM Booking b WHERE b.status IN ('CONFIRMED', 'COMPLETED') AND b.createdAt >= :startDate")
   List<Booking> findBookingsForRevenue(@Param("startDate") java.time.Instant startDate);
 

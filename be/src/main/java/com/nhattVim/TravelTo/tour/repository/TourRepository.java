@@ -55,4 +55,11 @@ public interface TourRepository extends JpaRepository<Tour, Long> {
   List<String> findDistinctDestinationLocations(@Param("status") TourStatus status);
 
   Page<Tour> findByProvinceCodeAndStatusAndIdNot(String provinceCode, TourStatus status, Long id, Pageable pageable);
+
+  @Query("SELECT t FROM Tour t WHERE t.status = :status AND t.id != :id ORDER BY ABS(t.price - :price) ASC")
+  Page<Tour> findRelatedToursByPrice(
+      @Param("status") TourStatus status,
+      @Param("id") Long id,
+      @Param("price") java.math.BigDecimal price,
+      Pageable pageable);
 }

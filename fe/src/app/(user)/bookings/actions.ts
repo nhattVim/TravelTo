@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@/auth";
-import { createBooking } from "@/lib/api/private";
+import { submitOrder } from "@/lib/api/private";
 import { ApiHttpError } from "@/lib/api/client";
 import { redirect } from "next/navigation";
 
@@ -19,12 +19,14 @@ export async function createBookingAction(formData: FormData) {
     redirect("/bookings?error=invalid");
   }
 
+  let paymentUrl = "";
   try {
-    await createBooking(session.backendAccessToken, {
+    const response = await submitOrder(session.backendAccessToken, {
       tourId,
       departureId,
       guests,
     });
+    paymentUrl = response.paymentUrl;
   } catch (error) {
     if (error instanceof ApiHttpError && (error.status === 401 || error.status === 403)) {
       redirect("/login?reason=session-expired");
@@ -32,5 +34,9 @@ export async function createBookingAction(formData: FormData) {
     redirect("/bookings?error=create-failed");
   }
 
-  redirect("/bookings?success=1");
+  if (paymentUrl) {
+    redirect(paymentUrl);
+  } else {
+    redirect("/bookings?error=payment-url-missing");
+  }
 }

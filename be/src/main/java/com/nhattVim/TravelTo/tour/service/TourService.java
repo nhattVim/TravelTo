@@ -453,8 +453,8 @@ public class TourService {
 
   public PagedResponse<TourListItemResponse> getRelatedTours(Long tourId, int page, int size) {
     Tour tour = findTourOrThrow(tourId);
-    PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-    Page<Tour> tours = tourRepository.findByProvinceCodeAndStatusAndIdNot(tour.getProvinceCode(), TourStatus.PUBLISHED, tour.getId(), pageRequest);
+    PageRequest pageRequest = PageRequest.of(page, size);
+    Page<Tour> tours = tourRepository.findRelatedToursByPrice(TourStatus.PUBLISHED, tour.getId(), tour.getPrice(), pageRequest);
     
     List<Long> tourIds = tours.getContent().stream().map(Tour::getId).toList();
     java.util.Map<Long, List<String>> departuresMap = fetchNextDeparturesMap(tourIds);

@@ -280,6 +280,7 @@ export async function checkWishlistStatus(token: string, tourId: number): Promis
   });
 }
 
+
 export async function getDashboardStats(token: string): Promise<DashboardStatsDto> {
   return apiFetch<DashboardStatsDto>("/api/v1/admin/dashboard/stats", {
     headers: authHeaders(token),
@@ -296,6 +297,18 @@ export async function createTourReview(
     method: "POST",
     headers: authHeaders(token),
     body: JSON.stringify(payload),
+    cache: "no-store",
+  });
+}
+
+export async function deleteTourReview(
+  token: string,
+  tourId: number,
+  reviewId: number
+): Promise<void> {
+  return apiFetch<void>(`/api/v1/tours/${tourId}/reviews/${reviewId}`, {
+    method: "DELETE",
+    headers: authHeaders(token),
     cache: "no-store",
   });
 }
@@ -327,6 +340,19 @@ export async function markNotificationRead(token: string, id: number): Promise<v
   return apiFetch<void>(`/api/v1/notifications/${id}/read`, {
     method: "PUT",
     headers: authHeaders(token),
+    cache: "no-store",
+  });
+}
+
+// Payment
+export async function submitOrder(
+  token: string,
+  payload: { tourId: number; departureId: number; guests: number; contactName?: string; contactPhone?: string; contactNotes?: string; }
+): Promise<{ paymentUrl: string }> {
+  return apiFetch<{ paymentUrl: string }>("/api/v1/payment/vnpay/submit-order", {
+    method: "POST",
+    headers: authHeaders(token),
+    body: JSON.stringify(payload),
     cache: "no-store",
   });
 }

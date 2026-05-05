@@ -21,7 +21,7 @@ export function UserSidebar({ user }: UserSidebarProps) {
       <div className="flex items-center gap-4 rounded-3xl border border-[#cbeadf] bg-white p-5 shadow-[0_8px_16px_rgba(12,85,62,0.03)] lg:p-6">
         <div className="flex h-12 w-12 overflow-hidden flex-shrink-0 items-center justify-center rounded-full bg-[#0a7d59] text-2xl font-bold text-white shadow-inner">
           {user.image ? (
-            <img src={user.image} alt={user.name || "Avatar"} className="h-full w-full object-cover" />
+            <img src={user.image} alt={user.name || "Avatar"} referrerPolicy="no-referrer" className="h-full w-full object-cover" />
           ) : (
             user.name?.charAt(0)?.toUpperCase()
           )}

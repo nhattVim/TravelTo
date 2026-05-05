@@ -121,4 +121,18 @@ public class ReviewService {
                 .replies(review.getReplies() != null ? review.getReplies().stream().map(this::mapToResponse).collect(Collectors.toList()) : null)
                 .build();
     }
+
+    @Transactional
+    public void deleteReviewByEmail(Long reviewId, String email) {
+        User user = userRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new NotFoundException("Review not found"));
+                
+        if (!review.getUser().getId().equals(user.getId())) {
+            throw new BadRequestException("Bạn không có quyền xóa bình luận này");
+        }
+        
+        reviewRepository.delete(review);
+    }
 }

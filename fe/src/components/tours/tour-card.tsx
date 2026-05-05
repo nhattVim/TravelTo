@@ -9,7 +9,7 @@ interface TourCardProps {
 
 export function TourCard({ tour }: TourCardProps) {
   return (
-    <article className="group overflow-hidden rounded-3xl border border-[#d3efe4] bg-white shadow-[0_14px_30px_rgba(14,95,68,0.08)] transition-transform duration-300 hover:-translate-y-1">
+    <article className="group flex flex-col h-full overflow-hidden rounded-3xl border border-[#d3efe4] bg-white shadow-[0_14px_30px_rgba(14,95,68,0.08)] transition-transform duration-300 hover:-translate-y-1">
       <div className="relative h-52 overflow-hidden">
         <Image
           src={tour.imageUrl}
@@ -22,7 +22,7 @@ export function TourCard({ tour }: TourCardProps) {
         </div>
       </div>
 
-      <div className="space-y-4 p-5">
+      <div className="flex flex-col flex-1 space-y-4 p-5">
         <h3 className="line-clamp-1 text-xl font-semibold text-[#083b2d]">{tour.title}</h3>
         <p className="line-clamp-2 text-base text-[#37584f]">{tour.summary}</p>
         <p className="text-sm font-semibold uppercase tracking-widest text-[#1c6650]">
@@ -32,7 +32,7 @@ export function TourCard({ tour }: TourCardProps) {
           <span>{tour.days} ngày · {tour.nights} đêm</span>
           <span>Còn {tour.slotsAvailable} chỗ</span>
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mt-auto pt-2">
           <p className="text-xl font-bold text-[#0a7d59]">{formatCurrencyVnd(tour.price)}</p>
           <Link
             href={`/tours/${tour.id}`}

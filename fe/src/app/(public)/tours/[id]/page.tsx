@@ -186,11 +186,11 @@ export default async function TourDetailPage({ params, searchParams }: TourDetai
         </article>
       </section>
 
+      <RelatedTours tours={relatedTours} token={token} />
+
       <section className="space-y-6 rounded-3xl border border-[#cdece0] bg-white p-6 md:p-8">
         <TourReviews tourId={tour.id} token={token} />
       </section>
-
-      <RelatedTours tours={relatedTours} token={token} />
     </div>
   );
 }

@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
+
 @RestController
 @RequestMapping("/api/v1/tours")
 @RequiredArgsConstructor
@@ -41,7 +43,17 @@ public class ReviewController {
             @RequestHeader("Authorization") String token) {
         String jwt = token.substring(7);
         String email = jwtService.extractEmail(jwt);
-        // We need to fetch userId from email
         return ResponseEntity.status(HttpStatus.CREATED).body(reviewService.createReviewByEmail(tourId, email, request));
+    }
+
+    @DeleteMapping("/{tourId}/reviews/{reviewId}")
+    public ResponseEntity<Void> deleteReview(
+            @PathVariable Long tourId,
+            @PathVariable Long reviewId,
+            @RequestHeader("Authorization") String token) {
+        String jwt = token.substring(7);
+        String email = jwtService.extractEmail(jwt);
+        reviewService.deleteReviewByEmail(reviewId, email);
+        return ResponseEntity.noContent().build();
     }
 }

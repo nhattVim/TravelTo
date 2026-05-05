@@ -158,4 +158,22 @@ public class BookingService {
         booking.getContactPhone(),
         booking.getContactNotes());
   }
+
+  @org.springframework.scheduling.annotation.Scheduled(fixedDelay = 300000) // 5 minutes
+  @Transactional
+  public void cancelExpiredPendingBookings() {
+    java.time.Instant expiryTime = java.time.Instant.now().minus(java.time.Duration.ofMinutes(15));
+    List<Booking> expiredBookings = bookingRepository.findByStatusAndCreatedAtBefore(BookingStatus.PENDING, expiryTime);
+    
+    if (!expiredBookings.isEmpty()) {
+      org.slf4j.LoggerFactory.getLogger(BookingService.class)
+          .info("Found {} expired PENDING bookings. Cancelling and restoring slots...", expiredBookings.size());
+          
+      for (Booking booking : expiredBookings) {
+        booking.setStatus(BookingStatus.CANCELLED);
+        restoreSeats(booking);
+      }
+      bookingRepository.saveAll(expiredBookings);
+    }
+  }
 }
