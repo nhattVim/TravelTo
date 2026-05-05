@@ -52,7 +52,19 @@ public class Booking extends BaseAuditEntity {
   private LocalDate travelDate;
 
   @Column(nullable = false)
-  private int guests;
+  private int guests; // Total seat-occupying guests (adults + children + toddlers)
+
+  @Column(nullable = false, columnDefinition = "int default 1")
+  private int adultGuests = 1;
+
+  @Column(nullable = false, columnDefinition = "int default 0")
+  private int childGuests = 0;
+
+  @Column(nullable = false, columnDefinition = "int default 0")
+  private int toddlerGuests = 0;
+
+  @Column(nullable = false, columnDefinition = "int default 0")
+  private int infantGuests = 0;
 
   @Column(nullable = false, precision = 12, scale = 2)
   private BigDecimal totalPrice;

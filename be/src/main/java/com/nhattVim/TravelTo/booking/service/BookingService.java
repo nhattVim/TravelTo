@@ -47,28 +47,45 @@ public class BookingService {
     TourDeparture departure = tourDepartureRepository.findByIdAndTour_Id(request.departureId(), tour.getId())
         .orElseThrow(() -> new NotFoundException("Không tìm thấy đợt khởi hành phù hợp"));
 
-    if (request.guests() <= 0) {
-      throw new BadRequestException("Số lượng khách phải lớn hơn 0");
+    int adultGuests = request.adultGuests() != null ? request.adultGuests() : 1;
+    int childGuests = request.childGuests() != null ? request.childGuests() : 0;
+    int toddlerGuests = request.toddlerGuests() != null ? request.toddlerGuests() : 0;
+    int infantGuests = request.infantGuests() != null ? request.infantGuests() : 0;
+    
+    int totalSlotsRequired = adultGuests + childGuests + toddlerGuests;
+
+    if (totalSlotsRequired <= 0) {
+      throw new BadRequestException("Phải có ít nhất 1 hành khách (người lớn, trẻ em hoặc trẻ nhỏ)");
     }
 
     if (departure.getDepartureDate().isBefore(LocalDate.now())) {
       throw new BadRequestException("Đợt khởi hành đã qua, vui lòng chọn ngày khác");
     }
 
-    if (departure.getSlotsAvailable() < request.guests()) {
+    if (departure.getSlotsAvailable() < totalSlotsRequired) {
       throw new BadRequestException("Số chỗ trống không đủ");
     }
 
-    departure.setSlotsAvailable(departure.getSlotsAvailable() - request.guests());
-    tour.setSlotsAvailable(Math.max(0, tour.getSlotsAvailable() - request.guests()));
+    departure.setSlotsAvailable(departure.getSlotsAvailable() - totalSlotsRequired);
+    tour.setSlotsAvailable(Math.max(0, tour.getSlotsAvailable() - totalSlotsRequired));
+
+    java.math.BigDecimal basePrice = departure.getPrice();
+    java.math.BigDecimal adultPrice = basePrice.multiply(java.math.BigDecimal.valueOf(adultGuests));
+    java.math.BigDecimal childPrice = basePrice.multiply(java.math.BigDecimal.valueOf(childGuests)).multiply(java.math.BigDecimal.valueOf(0.75));
+    java.math.BigDecimal toddlerPrice = basePrice.multiply(java.math.BigDecimal.valueOf(toddlerGuests)).multiply(java.math.BigDecimal.valueOf(0.5));
+    java.math.BigDecimal totalPrice = adultPrice.add(childPrice).add(toddlerPrice);
 
     Booking booking = Booking.builder()
         .user(user)
         .tour(tour)
         .departure(departure)
         .travelDate(departure.getDepartureDate())
-        .guests(request.guests())
-        .totalPrice(departure.getPrice().multiply(java.math.BigDecimal.valueOf(request.guests())))
+        .guests(totalSlotsRequired)
+        .adultGuests(adultGuests)
+        .childGuests(childGuests)
+        .toddlerGuests(toddlerGuests)
+        .infantGuests(infantGuests)
+        .totalPrice(totalPrice)
         .contactName(request.contactName())
         .contactPhone(request.contactPhone())
         .contactNotes(request.contactNotes())
@@ -149,6 +166,10 @@ public class BookingService {
         booking.getTour().getProvinceName(),
         booking.getTravelDate(),
         booking.getGuests(),
+        booking.getAdultGuests(),
+        booking.getChildGuests(),
+        booking.getToddlerGuests(),
+        booking.getInfantGuests(),
         booking.getTotalPrice(),
         booking.getStatus().name(),
         booking.getCreatedAt(),

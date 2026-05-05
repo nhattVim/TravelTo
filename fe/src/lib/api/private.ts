@@ -347,7 +347,18 @@ export async function markNotificationRead(token: string, id: number): Promise<v
 // Payment
 export async function submitOrder(
   token: string,
-  payload: { tourId: number; departureId: number; guests: number; contactName?: string; contactPhone?: string; contactNotes?: string; }
+  payload: { 
+    tourId: number; 
+    departureId: number; 
+    guests?: number;
+    adultGuests?: number;
+    childGuests?: number;
+    toddlerGuests?: number;
+    infantGuests?: number;
+    contactName?: string; 
+    contactPhone?: string; 
+    contactNotes?: string; 
+  }
 ): Promise<{ paymentUrl: string }> {
   return apiFetch<{ paymentUrl: string }>("/api/v1/payment/vnpay/submit-order", {
     method: "POST",

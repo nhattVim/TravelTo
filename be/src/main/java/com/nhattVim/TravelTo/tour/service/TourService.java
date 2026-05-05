@@ -63,7 +63,7 @@ public class TourService {
         pageable);
 
     List<Long> tourIds = tourPage.getContent().stream().map(Tour::getId).toList();
-    java.util.Map<Long, List<String>> departuresMap = fetchNextDeparturesMap(tourIds);
+    java.util.Map<Long, List<TourDeparture>> departuresMap = fetchNextDeparturesMapFull(tourIds);
 
     List<TourListItemResponse> items = tourPage.getContent().stream()
         .map(tour -> toListItem(tour, departuresMap.getOrDefault(tour.getId(), new ArrayList<>())))
@@ -207,27 +207,26 @@ public class TourService {
   public List<TourListItemResponse> getHighlights() {
     List<Tour> tours = tourRepository.findTop6ByStatusOrderByCreatedAtDesc(TourStatus.PUBLISHED);
     List<Long> tourIds = tours.stream().map(Tour::getId).toList();
-    java.util.Map<Long, List<String>> departuresMap = fetchNextDeparturesMap(tourIds);
+    java.util.Map<Long, List<TourDeparture>> departuresMap = fetchNextDeparturesMapFull(tourIds);
     
     return tours.stream()
         .map(tour -> toListItem(tour, departuresMap.getOrDefault(tour.getId(), new ArrayList<>())))
         .toList();
   }
 
-  private java.util.Map<Long, List<String>> fetchNextDeparturesMap(List<Long> tourIds) {
+  private java.util.Map<Long, List<TourDeparture>> fetchNextDeparturesMapFull(List<Long> tourIds) {
     if (tourIds == null || tourIds.isEmpty()) {
       return new java.util.HashMap<>();
     }
     List<TourDeparture> allDepartures = tourDepartureRepository
         .findByTour_IdInAndDepartureDateGreaterThanEqualOrderByDepartureDateAsc(tourIds, LocalDate.now());
     return allDepartures.stream()
-        .collect(java.util.stream.Collectors.groupingBy(
-            d -> d.getTour().getId(),
-            java.util.stream.Collectors.mapping(d -> d.getDepartureDate().toString(), java.util.stream.Collectors.toList())
-        ));
+        .collect(java.util.stream.Collectors.groupingBy(d -> d.getTour().getId()));
   }
 
-  private TourListItemResponse toListItem(Tour tour, List<String> nextDepartures) {
+  private TourListItemResponse toListItem(Tour tour, List<TourDeparture> nextDepartures) {
+    List<String> departureDates = nextDepartures.stream().map(d -> d.getDepartureDate().toString()).toList();
+    int slotsAvailable = nextDepartures.isEmpty() ? 0 : nextDepartures.getFirst().getSlotsAvailable();
     return new TourListItemResponse(
         tour.getId(),
         tour.getTitle(),
@@ -240,8 +239,8 @@ public class TourService {
         tour.getProvinceName(),
         tour.getDepartureLocation(),
         tour.getDestinationLocation(),
-        tour.getSlotsAvailable(),
-        nextDepartures);
+        slotsAvailable,
+        departureDates);
   }
 
   private AdminTourListItemResponse toAdminListItem(Tour tour) {
@@ -457,7 +456,7 @@ public class TourService {
     Page<Tour> tours = tourRepository.findRelatedToursByPrice(TourStatus.PUBLISHED, tour.getId(), tour.getPrice(), pageRequest);
     
     List<Long> tourIds = tours.getContent().stream().map(Tour::getId).toList();
-    java.util.Map<Long, List<String>> departuresMap = fetchNextDeparturesMap(tourIds);
+    java.util.Map<Long, List<TourDeparture>> departuresMap = fetchNextDeparturesMapFull(tourIds);
     
     List<TourListItemResponse> items = tours.getContent().stream()
         .map(t -> toListItem(t, departuresMap.getOrDefault(t.getId(), new ArrayList<>())))
