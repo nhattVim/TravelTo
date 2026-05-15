@@ -13,7 +13,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -60,7 +59,7 @@ public class PaymentController {
   @GetMapping("/vnpay/return")
   public void vnpayReturn(@RequestParam Map<String, String> params, HttpServletResponse response) throws IOException {
     boolean isValidSignature = paymentService.verifySignature(params);
-    
+
     if (!isValidSignature) {
       response.sendRedirect(feOrigin + "/payment/result?status=failed&reason=invalid_signature");
       return;

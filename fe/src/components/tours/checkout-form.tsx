@@ -3,7 +3,7 @@
 import { useTransition, useState } from "react";
 import { formatCurrencyVnd, formatDateVi } from "@/lib/format";
 import { useRouter } from "next/navigation";
-import { submitPaymentOrder } from "@/lib/api/private";
+import { submitOrder } from "@/lib/api/private";
 
 interface CheckoutFormProps {
   tourId: number;
@@ -49,7 +49,7 @@ export function CheckoutForm(props: CheckoutFormProps) {
 
     startTransition(async () => {
       try {
-        const res = await submitPaymentOrder(props.token, {
+        const res = await submitOrder(props.token, {
           tourId: props.tourId,
           departureId: props.departureId,
           adultGuests,

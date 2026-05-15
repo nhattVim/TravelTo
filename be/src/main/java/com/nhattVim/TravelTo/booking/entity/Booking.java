@@ -54,15 +54,19 @@ public class Booking extends BaseAuditEntity {
   @Column(nullable = false)
   private int guests; // Total seat-occupying guests (adults + children + toddlers)
 
+  @Builder.Default
   @Column(nullable = false, columnDefinition = "int default 1")
   private int adultGuests = 1;
 
+  @Builder.Default
   @Column(nullable = false, columnDefinition = "int default 0")
   private int childGuests = 0;
 
+  @Builder.Default
   @Column(nullable = false, columnDefinition = "int default 0")
   private int toddlerGuests = 0;
 
+  @Builder.Default
   @Column(nullable = false, columnDefinition = "int default 0")
   private int infantGuests = 0;
 

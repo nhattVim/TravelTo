@@ -5,11 +5,15 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { formatCurrencyVnd, formatDateVi } from "@/lib/format";
 import { TourDeparture } from "@/types/travel";
+import { TourTransportTimeline } from "./tour-transport-timeline";
 
 interface TourDepartureCalendarProps {
   tourId: number;
   departures: TourDeparture[];
   initialDate?: string;
+  departureLocation?: string;
+  destinationLocation?: string;
+  transportText?: string;
 }
 
 const WEEKDAYS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
@@ -60,7 +64,14 @@ function buildCalendarCells(year: number, month: number): Array<number | null> {
   return cells;
 }
 
-export function TourDepartureCalendar({ tourId, departures, initialDate }: TourDepartureCalendarProps) {
+export function TourDepartureCalendar({ 
+  tourId, 
+  departures, 
+  initialDate,
+  departureLocation,
+  destinationLocation,
+  transportText
+}: TourDepartureCalendarProps) {
   const router = useRouter();
 
   const sortedDepartures = useMemo(
@@ -136,7 +147,7 @@ export function TourDepartureCalendar({ tourId, departures, initialDate }: TourD
 
       {selectedDeparture ? (
         <div className="rounded-2xl border border-[#dbf2e9] bg-[#f8fff9] p-6 animate-in slide-in-from-bottom-4 fade-in duration-300">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#dbf2e9] pb-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#dbf2e9] pb-4 mb-8">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#0a7d59]">Ngày khởi hành đã chọn</p>
               <p className="text-2xl font-bold text-[#083b2d] mt-1">{formatDateVi(selectedDeparture.departureDate)}</p>
@@ -149,28 +160,52 @@ export function TourDepartureCalendar({ tourId, departures, initialDate }: TourD
             </button>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-6 mt-6">
-            <div className="space-y-3">
-              <div className="flex justify-between items-center rounded-xl bg-white p-4 shadow-sm border border-[#eafbf3]">
+          <div className="mb-8">
+            <TourTransportTimeline 
+              departureLocation={departureLocation || ""}
+              destinationLocation={destinationLocation || ""}
+              transportText={transportText || ""}
+              departureDate={selectedDeparture.departureDate}
+              returnDate={selectedDeparture.returnDate}
+              embedded={true}
+            />
+          </div>
+
+          <div className="grid lg:grid-cols-[1fr_240px] gap-8 items-stretch border-t border-[#dbf2e9] pt-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex justify-between items-center rounded-xl bg-white p-4 border border-[#eafbf3]">
                 <span className="text-base text-[#285447] font-medium">Người lớn</span>
-                <span className="text-xl font-bold text-[#db2200]">{formatCurrencyVnd(selectedDeparture.price)}</span>
+                <span className="text-lg font-bold text-[#db2200]">{formatCurrencyVnd(selectedDeparture.price)}</span>
               </div>
-              <div className="flex justify-between items-center rounded-xl bg-white p-4 shadow-sm border border-[#eafbf3]">
-                <span className="text-base text-[#285447] font-medium">Số chỗ còn nhận</span>
-                <span className="text-lg font-bold text-[#0a7d59]">{selectedDeparture.slotsAvailable} chỗ</span>
+              <div className="flex justify-between items-center rounded-xl bg-white p-4 border border-[#eafbf3]">
+                <span className="text-base text-[#285447] font-medium">Trẻ em (5-11 tuổi)</span>
+                <span className="text-lg font-bold text-[#db2200]">{formatCurrencyVnd(selectedDeparture.price * 0.75)}</span>
+              </div>
+              <div className="flex justify-between items-center rounded-xl bg-white p-4 border border-[#eafbf3]">
+                <span className="text-base text-[#285447] font-medium">Trẻ nhỏ (2-4 tuổi)</span>
+                <span className="text-lg font-bold text-[#db2200]">{formatCurrencyVnd(selectedDeparture.price * 0.5)}</span>
+              </div>
+              <div className="flex justify-between items-center rounded-xl bg-white p-4 border border-[#eafbf3]">
+                <span className="text-base text-[#285447] font-medium">Em bé (Dưới 2 tuổi)</span>
+                <span className="text-lg font-bold text-[#0a7d59]">0 đ</span>
               </div>
             </div>
             
-            <div className="flex flex-col justify-end">
+            <div className="flex flex-col justify-between gap-4">
+              <div className="flex justify-between items-center rounded-xl bg-white p-4 border border-[#eafbf3]">
+                <span className="text-base text-[#0a7d59] font-bold">Số chỗ còn nhận</span>
+                <span className="text-lg font-bold text-[#0a7d59]">{selectedDeparture.slotsAvailable} chỗ</span>
+              </div>
+              
               {selectedDeparture.slotsAvailable > 0 ? (
                 <Link
                   href={`/checkout/${tourId}?departureId=${selectedDeparture.id}`}
-                  className="w-full rounded-2xl bg-[#0a7d59] px-6 py-4 text-center text-lg font-bold text-white transition hover:bg-[#085a41] shadow-[0_8px_20px_rgba(10,125,89,0.2)] hover:-translate-y-1"
+                  className="w-full rounded-xl bg-[#0a7d59] flex items-center justify-center h-[58px] text-lg font-bold text-white transition hover:bg-[#085a41] shadow-[0_8px_20px_rgba(10,125,89,0.2)] hover:-translate-y-1"
                 >
                   Đặt ngay
                 </Link>
               ) : (
-                <button disabled className="w-full rounded-2xl bg-[#cbdad4] px-6 py-4 text-center text-lg font-bold text-white cursor-not-allowed">
+                <button disabled className="w-full rounded-xl bg-[#cbdad4] flex items-center justify-center h-[58px] text-lg font-bold text-white cursor-not-allowed">
                   Đã hết chỗ
                 </button>
               )}

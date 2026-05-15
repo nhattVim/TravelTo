@@ -83,7 +83,14 @@ export default async function TourDetailPage({ params, searchParams }: TourDetai
           </div>
 
           <div id="lich-khoi-hanh">
-            <TourDepartureCalendar tourId={tour.id} departures={tour.departures ?? []} initialDate={dateFromUrl} />
+            <TourDepartureCalendar 
+              tourId={tour.id} 
+              departures={tour.departures ?? []} 
+              initialDate={dateFromUrl}
+              departureLocation={tour.departureLocation}
+              destinationLocation={tour.destinationLocation}
+              transportText={additionalInfo.transport || ""}
+            />
           </div>
         </div>
 
@@ -186,7 +193,7 @@ export default async function TourDetailPage({ params, searchParams }: TourDetai
         </article>
       </section>
 
-      <RelatedTours tours={relatedTours} token={token} />
+      <RelatedTours tours={relatedTours} />
 
       <section className="space-y-6 rounded-3xl border border-[#cdece0] bg-white p-6 md:p-8">
         <TourReviews tourId={tour.id} token={token} />
