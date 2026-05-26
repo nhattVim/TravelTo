@@ -29,6 +29,7 @@ export function NotificationBell({ token }: { token?: string }) {
   }, []);
 
   const toggleDropdown = async () => {
+    if (!token) return;
     const newState = !isOpen;
     setIsOpen(newState);
     if (newState && notifications.length === 0) {
@@ -42,6 +43,7 @@ export function NotificationBell({ token }: { token?: string }) {
   };
 
   const handleRead = async (id: number) => {
+    if (!token) return;
     try {
       await markNotificationRead(token, id);
       setUnreadCount((prev) => Math.max(0, prev - 1));
