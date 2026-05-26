@@ -10,6 +10,8 @@ import { auth } from "@/auth";
 import { checkWishlistStatus } from "@/lib/api/private";
 import { FavoriteButton } from "@/components/tours/favorite-button";
 
+export const dynamic = "force-dynamic";
+
 interface TourDetailPageProps {
   params: Promise<{ id: string }>;
   searchParams?: Promise<Record<string, string | string[] | undefined>>;

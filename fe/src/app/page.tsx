@@ -7,6 +7,8 @@ import { TourCard } from "@/components/tours/tour-card";
 import { DestinationsSection } from "@/components/home/destinations-section";
 import { getHighlights } from "@/lib/api/public";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const highlights = await getHighlights();
 

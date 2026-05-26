@@ -4,6 +4,8 @@ import { HorizontalTourCard } from "@/components/tours/horizontal-tour-card";
 import { getTourFilterOptions, getTours } from "@/lib/api/public";
 import { auth } from "@/auth";
 
+export const dynamic = "force-dynamic";
+
 interface ToursPageProps {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
