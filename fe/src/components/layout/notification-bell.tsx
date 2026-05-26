@@ -7,7 +7,7 @@ import { NotificationDto } from "@/types/travel";
 import Link from "next/link";
 import { formatDateVi } from "@/lib/format";
 
-export function NotificationBell({ token }: { token: string }) {
+export function NotificationBell({ token }: { token?: string }) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [notifications, setNotifications] = useState<NotificationDto[]>([]);
   const [isOpen, setIsOpen] = useState(false);
