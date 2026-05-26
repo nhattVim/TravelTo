@@ -12,6 +12,7 @@ import com.nhattVim.TravelTo.tour.entity.TourDeparture;
 import com.nhattVim.TravelTo.tour.entity.TourStatus;
 import com.nhattVim.TravelTo.tour.repository.TourDepartureRepository;
 import com.nhattVim.TravelTo.tour.repository.TourRepository;
+import com.nhattVim.TravelTo.common.service.EmailService;
 import com.nhattVim.TravelTo.user.entity.User;
 import com.nhattVim.TravelTo.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -26,13 +27,16 @@ public class BookingService {
   private final TourRepository tourRepository;
   private final TourDepartureRepository tourDepartureRepository;
   private final UserRepository userRepository;
+  private final EmailService emailService;
 
   public BookingService(BookingRepository bookingRepository, TourRepository tourRepository,
-      TourDepartureRepository tourDepartureRepository, UserRepository userRepository) {
+      TourDepartureRepository tourDepartureRepository, UserRepository userRepository,
+      EmailService emailService) {
     this.bookingRepository = bookingRepository;
     this.tourRepository = tourRepository;
     this.tourDepartureRepository = tourDepartureRepository;
     this.userRepository = userRepository;
+    this.emailService = emailService;
   }
 
   @Transactional
@@ -130,7 +134,115 @@ public class BookingService {
     }
 
     booking.setStatus(newStatus);
+
+    if (newStatus == BookingStatus.CONFIRMED && currentStatus != BookingStatus.CONFIRMED) {
+      try {
+        sendBookingConfirmationEmail(booking);
+      } catch (Exception e) {
+        org.slf4j.LoggerFactory.getLogger(BookingService.class)
+            .error("Failed to send booking confirmation email for booking ID: {}", booking.getId(), e);
+      }
+    }
+
     return toResponse(booking);
+  }
+
+  private void sendBookingConfirmationEmail(Booking booking) {
+    String to = booking.getUser().getEmail();
+    String subject = "Xác nhận đặt tour thành công - TravelTo #" + booking.getId();
+    
+    String formattedDate = booking.getTravelDate().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+    String formattedPrice = String.format("%,d VNĐ", booking.getTotalPrice().longValue());
+    
+    List<String> guestDetails = new java.util.ArrayList<>();
+    if (booking.getAdultGuests() > 0) guestDetails.add(booking.getAdultGuests() + " người lớn");
+    if (booking.getChildGuests() > 0) guestDetails.add(booking.getChildGuests() + " trẻ em");
+    if (booking.getToddlerGuests() > 0) guestDetails.add(booking.getToddlerGuests() + " trẻ nhỏ");
+    if (booking.getInfantGuests() > 0) guestDetails.add(booking.getInfantGuests() + " em bé");
+    String guestDetailsStr = String.join(", ", guestDetails);
+
+    String notesRow = "";
+    if (booking.getContactNotes() != null && !booking.getContactNotes().isBlank()) {
+      notesRow = "<tr><td style=\"padding: 5px 0; color: #666;\">Ghi chú:</td><td style=\"padding: 5px 0; font-style: italic;\">" 
+          + booking.getContactNotes() + "</td></tr>";
+    }
+
+    String body = String.format("""
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; color: #333;">
+          <div style="text-align: center; border-bottom: 2px solid #0a7d59; padding-bottom: 10px; margin-bottom: 20px;">
+            <h2 style="color: #0a7d59; margin: 0;">Cảm ơn bạn đã đặt tour tại TravelTo!</h2>
+          </div>
+          <p>Xin chào <strong>%s</strong>,</p>
+          <p>Đơn đặt chỗ của bạn đã được xác nhận thanh toán thành công. Dưới đây là thông tin chi tiết:</p>
+          
+          <div style="background-color: #f9f9f9; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+            <h3 style="color: #0a7d59; margin-top: 0; border-bottom: 1px dashed #ccc; padding-bottom: 5px;">Thông tin chuyến đi:</h3>
+            <table style="width: 100%%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 5px 0; color: #666; width: 150px;">Mã đặt chỗ:</td>
+                <td style="padding: 5px 0; font-weight: bold; color: #0a7d59;">#%d</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 0; color: #666;">Tên tour:</td>
+                <td style="padding: 5px 0; font-weight: bold;">%s</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 0; color: #666;">Ngày khởi hành:</td>
+                <td style="padding: 5px 0;">%s</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 0; color: #666;">Điểm khởi hành:</td>
+                <td style="padding: 5px 0;">%s</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 0; color: #666;">Số lượng khách:</td>
+                <td style="padding: 5px 0;">%d hành khách (%s)</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 0; color: #666;">Tổng thanh toán:</td>
+                <td style="padding: 5px 0; font-weight: bold; color: #d14f4f; font-size: 16px;">%s</td>
+              </tr>
+            </table>
+          </div>
+          
+          <div style="background-color: #f9f9f9; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+            <h3 style="color: #0a7d59; margin-top: 0; border-bottom: 1px dashed #ccc; padding-bottom: 5px;">Thông tin liên hệ:</h3>
+            <table style="width: 100%%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 5px 0; color: #666; width: 150px;">Người liên hệ:</td>
+                <td style="padding: 5px 0;">%s</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 0; color: #666;">Số điện thoại:</td>
+                <td style="padding: 5px 0;">%s</td>
+              </tr>
+              %s
+            </table>
+          </div>
+          
+          <p>Bạn có thể theo dõi và tra cứu chi tiết tại mục <strong>"Đơn đặt chỗ"</strong> trên trang cá nhân của mình.</p>
+          <p>Nếu cần hỗ trợ thêm thông tin, quý khách vui lòng liên hệ với hotline chăm sóc khách hàng của TravelTo.</p>
+          <p>Chúc quý khách có một chuyến đi thật nhiều niềm vui và ý nghĩa!</p>
+          
+          <div style="text-align: center; border-top: 1px solid #e0e0e0; padding-top: 15px; margin-top: 20px; font-size: 12px; color: #999;">
+            <p>Đây là email tự động từ hệ thống TravelTo. Vui lòng không phản hồi email này.</p>
+          </div>
+        </div>
+        """,
+        booking.getContactName() != null ? booking.getContactName() : booking.getUser().getFullName(),
+        booking.getId(),
+        booking.getTour().getTitle(),
+        formattedDate,
+        booking.getTour().getDepartureLocation(),
+        booking.getGuests(),
+        guestDetailsStr,
+        formattedPrice,
+        booking.getContactName(),
+        booking.getContactPhone(),
+        notesRow
+    );
+
+    emailService.sendHtmlEmail(to, subject, body);
   }
 
   private void restoreSeats(Booking booking) {
