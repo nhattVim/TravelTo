@@ -95,8 +95,10 @@ export function RevenueChart({ data }: RevenueChartProps) {
             />
             <Tooltip
               contentStyle={{ borderRadius: '12px', border: '1px solid #cdece0', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
-              formatter={(value: number, name: string) => {
-                if (name === "Doanh thu") return [formatFullCurrency(value), name];
+              formatter={(value: any, name: any) => {
+                if (name === "Doanh thu" && typeof value === "number") {
+                  return [formatFullCurrency(value), name];
+                }
                 return [value, name];
               }}
               labelStyle={{ fontWeight: 'bold', color: '#083b2d', marginBottom: '8px' }}
