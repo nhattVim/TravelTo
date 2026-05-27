@@ -4,6 +4,7 @@ import { formatCurrencyVnd, formatDateVi } from "@/lib/format";
 import { getTourDetail, getRelatedTours } from "@/lib/api/public";
 import { TourDepartureCalendar } from "@/components/tours/tour-departure-calendar";
 import { TourImageSlider } from "@/components/tours/tour-image-slider";
+import { TourLocationMap } from "@/components/tours/tour-location-map";
 import { TourReviews } from "@/components/tours/tour-reviews";
 import { RelatedTours } from "@/components/tours/related-tours";
 import { auth } from "@/auth";
@@ -86,7 +87,6 @@ export default async function TourDetailPage({ params, searchParams }: TourDetai
 
           <div id="lich-khoi-hanh">
             <TourDepartureCalendar 
-              tourId={tour.id} 
               departures={tour.departures ?? []} 
               initialDate={dateFromUrl}
               departureLocation={tour.departureLocation}
@@ -123,12 +123,21 @@ export default async function TourDetailPage({ params, searchParams }: TourDetai
                   </svg>
                   <span className="hidden sm:inline">Ngày khác</span>
                 </Link>
-                <Link
-                  href={`/bookings?tourId=${tour.id}&departureId=${selectedDeparture.id}`}
-                  className="flex-1 inline-flex items-center justify-center rounded-xl bg-[#db2200] px-3 py-3 text-base font-bold text-white shadow-md transition hover:bg-[#b81d00]"
-                >
-                  Đặt ngay
-                </Link>
+                {selectedDeparture.slotsAvailable > 0 ? (
+                  <Link
+                    href={`/checkout/${tour.id}?departureId=${selectedDeparture.id}`}
+                    className="flex-1 inline-flex items-center justify-center rounded-xl bg-[#db2200] px-3 py-3 text-base font-bold text-white shadow-md transition hover:bg-[#b81d00]"
+                  >
+                    Đặt ngay
+                  </Link>
+                ) : (
+                  <button
+                    disabled
+                    className="flex-1 inline-flex items-center justify-center rounded-xl bg-[#cbdad4] px-3 py-3 text-base font-bold text-white cursor-not-allowed"
+                  >
+                    Đã hết chỗ
+                  </button>
+                )}
               </div>
             </>
           ) : (
@@ -193,6 +202,33 @@ export default async function TourDetailPage({ params, searchParams }: TourDetai
           <p className="font-semibold">Lưu ý</p>
           <p className="mt-2">{additionalInfo.notes || "Lịch trình thực tế có thể thay đổi theo điều kiện thời tiết và vận hành."}</p>
         </article>
+      </section>
+
+      <section className="space-y-4 rounded-3xl border border-[#cdece0] bg-white p-6 md:p-8">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <h2 className="text-3xl font-bold text-[#083b2d]">Vị trí điểm đến trên bản đồ</h2>
+            <p className="mt-1 text-base text-[#34594d]">
+              Khám phá vị trí <span className="font-semibold">{tour.destinationLocation}</span> và lộ trình từ {tour.departureLocation}
+            </p>
+          </div>
+          <div className="flex items-center gap-4 text-sm text-[#34594d]">
+            <span className="flex items-center gap-2">
+              <span className="inline-block h-3 w-3 rounded-full bg-[#0a7d59]" />
+              Khởi hành
+            </span>
+            <span className="flex items-center gap-2">
+              <span className="inline-block h-3 w-3 rounded-full bg-[#db2200]" />
+              Điểm đến
+            </span>
+          </div>
+        </div>
+        <TourLocationMap
+          destinationLocation={tour.destinationLocation}
+          departureLocation={tour.departureLocation}
+          tourTitle={tour.title}
+          provinceName={tour.provinceName}
+        />
       </section>
 
       <RelatedTours tours={relatedTours} />

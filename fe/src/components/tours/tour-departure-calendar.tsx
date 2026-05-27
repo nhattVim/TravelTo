@@ -1,14 +1,12 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useMemo, useState } from "react";
 import { formatCurrencyVnd, formatDateVi } from "@/lib/format";
 import { TourDeparture } from "@/types/travel";
 import { TourTransportTimeline } from "./tour-transport-timeline";
 
 interface TourDepartureCalendarProps {
-  tourId: number;
   departures: TourDeparture[];
   initialDate?: string;
   departureLocation?: string;
@@ -65,7 +63,6 @@ function buildCalendarCells(year: number, month: number): Array<number | null> {
 }
 
 export function TourDepartureCalendar({ 
-  tourId, 
   departures, 
   initialDate,
   departureLocation,
@@ -73,6 +70,22 @@ export function TourDepartureCalendar({
   transportText
 }: TourDepartureCalendarProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const updateDateInUrl = useCallback(
+    (date: string | null) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (date) {
+        params.set("date", date);
+      } else {
+        params.delete("date");
+      }
+      const query = params.toString();
+      router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    },
+    [pathname, router, searchParams],
+  );
 
   const sortedDepartures = useMemo(
     () => [...departures].sort((a, b) => a.departureDate.localeCompare(b.departureDate)),
@@ -99,7 +112,7 @@ export function TourDepartureCalendar({
     return monthKeys[0] ?? "";
   });
 
-  const selectedDepartureId = useMemo(() => {
+  const initialDepartureId = useMemo(() => {
     if (initialDate && departures.length > 0) {
       const match = departures.find(d => d.departureDate === initialDate);
       if (match) return match.id;
@@ -123,12 +136,25 @@ export function TourDepartureCalendar({
     return map;
   }, [monthDepartures]);
 
-  const [localSelectedId, setLocalSelectedId] = useState<number | null>(selectedDepartureId);
+  const [localSelectedId, setLocalSelectedId] = useState<number | null>(initialDepartureId);
 
   const effectiveSelectedDepartureId = localSelectedId;
 
   const selectedDeparture =
     monthDepartures.find((item) => item.id === effectiveSelectedDepartureId) ?? null;
+
+  const handleSelectDeparture = useCallback(
+    (departure: TourDeparture) => {
+      setLocalSelectedId(departure.id);
+      updateDateInUrl(departure.departureDate);
+    },
+    [updateDateInUrl],
+  );
+
+  const handleClearSelection = useCallback(() => {
+    setLocalSelectedId(null);
+    updateDateInUrl(null);
+  }, [updateDateInUrl]);
 
   if (sortedDepartures.length === 0) {
     return (
@@ -153,7 +179,7 @@ export function TourDepartureCalendar({
               <p className="text-2xl font-bold text-[#083b2d] mt-1">{formatDateVi(selectedDeparture.departureDate)}</p>
             </div>
             <button
-              onClick={() => setLocalSelectedId(null)}
+              onClick={handleClearSelection}
               className="text-sm font-semibold text-[#0a7d59] hover:underline whitespace-nowrap"
             >
               ← Chọn ngày khác
@@ -171,44 +197,50 @@ export function TourDepartureCalendar({
             />
           </div>
 
-          <div className="grid lg:grid-cols-[1fr_240px] gap-8 items-stretch border-t border-[#dbf2e9] pt-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex justify-between items-center rounded-xl bg-white p-4 border border-[#eafbf3]">
-                <span className="text-base text-[#285447] font-medium">Người lớn</span>
-                <span className="text-lg font-bold text-[#db2200]">{formatCurrencyVnd(selectedDeparture.price)}</span>
+          <div className="space-y-4 border-t border-[#dbf2e9] pt-8">
+            {selectedDeparture.slotsAvailable > 0 ? (
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-2xl border border-[#bde6d6] bg-gradient-to-r from-[#e7fff4] to-[#f8fff9] px-5 py-4">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0a7d59] text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-5 w-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+                    </svg>
+                  </span>
+                  <span className="text-base font-bold text-[#0a7d59]">Số chỗ còn nhận</span>
+                </div>
+                <span className="text-2xl font-bold text-[#0a7d59]">{selectedDeparture.slotsAvailable} chỗ</span>
               </div>
-              <div className="flex justify-between items-center rounded-xl bg-white p-4 border border-[#eafbf3]">
-                <span className="text-base text-[#285447] font-medium">Trẻ em (5-11 tuổi)</span>
-                <span className="text-lg font-bold text-[#db2200]">{formatCurrencyVnd(selectedDeparture.price * 0.75)}</span>
+            ) : (
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-2xl border border-[#f5b9b0] bg-gradient-to-r from-[#ffeae6] to-[#fff5f3] px-5 py-4">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#db2200] text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-5 w-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                    </svg>
+                  </span>
+                  <span className="text-base font-bold text-[#db2200]">Trạng thái</span>
+                </div>
+                <span className="text-2xl font-bold text-[#db2200]">Đã hết chỗ</span>
               </div>
-              <div className="flex justify-between items-center rounded-xl bg-white p-4 border border-[#eafbf3]">
-                <span className="text-base text-[#285447] font-medium">Trẻ nhỏ (2-4 tuổi)</span>
-                <span className="text-lg font-bold text-[#db2200]">{formatCurrencyVnd(selectedDeparture.price * 0.5)}</span>
+            )}
+
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="rounded-xl bg-white p-4 border border-[#eafbf3] text-center">
+                <p className="text-sm text-[#285447] font-medium">Người lớn</p>
+                <p className="mt-2 text-lg font-bold text-[#db2200]">{formatCurrencyVnd(selectedDeparture.price)}</p>
               </div>
-              <div className="flex justify-between items-center rounded-xl bg-white p-4 border border-[#eafbf3]">
-                <span className="text-base text-[#285447] font-medium">Em bé (Dưới 2 tuổi)</span>
-                <span className="text-lg font-bold text-[#0a7d59]">0 đ</span>
+              <div className="rounded-xl bg-white p-4 border border-[#eafbf3] text-center">
+                <p className="text-sm text-[#285447] font-medium">Trẻ em <span className="text-xs text-[#7a9a8e]">(5-11 tuổi)</span></p>
+                <p className="mt-2 text-lg font-bold text-[#db2200]">{formatCurrencyVnd(selectedDeparture.price * 0.75)}</p>
               </div>
-            </div>
-            
-            <div className="flex flex-col justify-between gap-4">
-              <div className="flex justify-between items-center rounded-xl bg-white p-4 border border-[#eafbf3]">
-                <span className="text-base text-[#0a7d59] font-bold">Số chỗ còn nhận</span>
-                <span className="text-lg font-bold text-[#0a7d59]">{selectedDeparture.slotsAvailable} chỗ</span>
+              <div className="rounded-xl bg-white p-4 border border-[#eafbf3] text-center">
+                <p className="text-sm text-[#285447] font-medium">Trẻ nhỏ <span className="text-xs text-[#7a9a8e]">(2-4 tuổi)</span></p>
+                <p className="mt-2 text-lg font-bold text-[#db2200]">{formatCurrencyVnd(selectedDeparture.price * 0.5)}</p>
               </div>
-              
-              {selectedDeparture.slotsAvailable > 0 ? (
-                <Link
-                  href={`/checkout/${tourId}?departureId=${selectedDeparture.id}`}
-                  className="w-full rounded-xl bg-[#0a7d59] flex items-center justify-center h-[58px] text-lg font-bold text-white transition hover:bg-[#085a41] shadow-[0_8px_20px_rgba(10,125,89,0.2)] hover:-translate-y-1"
-                >
-                  Đặt ngay
-                </Link>
-              ) : (
-                <button disabled className="w-full rounded-xl bg-[#cbdad4] flex items-center justify-center h-[58px] text-lg font-bold text-white cursor-not-allowed">
-                  Đã hết chỗ
-                </button>
-              )}
+              <div className="rounded-xl bg-white p-4 border border-[#eafbf3] text-center">
+                <p className="text-sm text-[#285447] font-medium">Em bé <span className="text-xs text-[#7a9a8e]">(Dưới 2 tuổi)</span></p>
+                <p className="mt-2 text-lg font-bold text-[#0a7d59]">Miễn phí</p>
+              </div>
             </div>
           </div>
         </div>
@@ -270,7 +302,7 @@ export function TourDepartureCalendar({
                 <button
                   key={`day-${day}`}
                   type="button"
-                  onClick={() => setLocalSelectedId(departure.id)}
+                  onClick={() => handleSelectDeparture(departure)}
                   className={`aspect-square rounded-lg border flex flex-col items-center justify-center p-1 transition ${isSelected
                     ? "border-[#0a7d59] bg-[#e7fff4] shadow-sm transform scale-105 z-10"
                     : "border-[#bde6d6] bg-white hover:border-[#0a7d59] hover:shadow-md hover:-translate-y-1"
