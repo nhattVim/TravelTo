@@ -303,14 +303,60 @@ Khi một đơn hàng được thanh toán thành công (Chuyển sang `CONFIRME
 
 Nhằm chứng minh tính khả thi và mức độ hoàn thiện của hệ thống, tôi đã thực hiện nhiều kịch bản kiểm thử (Test cases) với số lượng dữ liệu lớn và các hành vi người dùng khác nhau.
 
-### 4.1. Đánh giá tính năng (Functional Testing)
-Hệ thống đã đáp ứng xuất sắc các luồng nghiệp vụ cốt lõi mà không xảy ra hiện tượng đứt gãy (crash):
-- **Luồng Đặt vé (Booking Engine):** Xử lý chính xác logic tính toán chi phí phức tạp. Đặc biệt, luồng kiểm tra số chỗ trống (`slots_available`) được xử lý đồng bộ rất tốt. Trong bài test mô phỏng 5 luồng request cùng lúc đặt mua vé cuối cùng, hệ thống chỉ chấp nhận request đầu tiên và trả về lỗi "Không đủ chỗ trống" cho 4 request còn lại, ngăn ngừa hoàn toàn tình trạng Overbooking.
-- **Luồng Tự động hóa (Cronjob & Notification):** Hệ thống chứng minh được tính thông minh thông qua cơ chế tự động hủy Booking pending sau 15 phút. Spring `@Scheduled` hoạt động ổn định ở background. Sau khi hủy, số slot tự động được trả lại cho hệ thống để khách hàng khác có thể mua. 
-- **Trải nghiệm Email:** Luồng gửi thư HTML hoạt động cực kỳ mượt mà. Nội dung thư không bị vỡ bố cục khi xem trên ứng dụng Gmail (Mobile) lẫn Outlook (Desktop).
-- **Độ thông minh của AI (AI Capabilities):** Trợ lý ảo không trả lời lan man mà bám sát dữ liệu (Grounded Data) trong database nhờ cơ chế Function Calling.
+### 4.1. Kế hoạch kiểm thử hệ thống
 
-### 4.2. Đánh giá hiệu năng và bảo mật (Non-Functional Testing)
+#### 4.1.1. Mục tiêu kiểm thử
+Mục tiêu chính của quá trình kiểm thử là đảm bảo hệ thống TravelTo hoạt động ổn định, chính xác và đáp ứng đầy đủ các yêu cầu chức năng lẫn phi chức năng đã đề ra ở Chương 2. Quá trình kiểm thử giúp phát hiện sớm các lỗi logic (bug) trong luồng đặt vé, bảo vệ tính toàn vẹn của dữ liệu và kiểm chứng độ tin cậy của trợ lý ảo AI trước khi đưa ứng dụng vào triển khai thực tế.
+
+#### 4.1.2. Phạm vi kiểm thử
+Phạm vi kiểm thử bao phủ toàn bộ các luồng nghiệp vụ cốt lõi của hệ thống, cụ thể:
+- **Module Xác thực:** Đăng ký, Đăng nhập (Local & OAuth2 Google), Đăng xuất, Phân quyền.
+- **Module Khách hàng:** Tìm kiếm, lọc tour, tương tác Chatbot AI, đặt vé (Booking Engine), kiểm tra trạng thái đơn hàng.
+- **Module Quản trị:** Quản lý dữ liệu Tour, đợt khởi hành, duyệt/hủy đơn đặt chỗ, bảo mật API.
+- **Module Tự động hóa:** Cronjob tự động hủy đơn quá hạn, luồng sinh và gửi Email thông báo.
+
+#### 4.1.3. Phương pháp kiểm thử
+Dự án áp dụng chủ yếu phương pháp **Kiểm thử hộp đen (Black-box testing)** kết hợp với **Kiểm thử chức năng thủ công (Manual Functional Testing)**:
+- Người kiểm thử không cần nhìn vào mã nguồn mà chỉ tương tác với hệ thống qua Giao diện người dùng (Front-end UI) và gọi các endpoint API bằng Postman.
+- Tập trung giả lập các kịch bản hành vi (User flow) thực tế và các trường hợp nhập sai dữ liệu để xác nhận hệ thống bắt lỗi (Exception) và cho ra Output chuẩn xác theo yêu cầu.
+
+#### 4.1.4. Môi trường kiểm thử
+- **Thiết bị:** Máy tính cá nhân (PC/Laptop) và chế độ giả lập màn hình di động (Mobile Viewport) để test tính năng Responsive.
+- **Trình duyệt (Browser):** Google Chrome (v120+), Microsoft Edge.
+- **Công cụ bổ trợ:** Postman (để test bảo mật API), DBeaver (để giám sát dữ liệu dưới Database).
+
+### 4.2. Thiết kế test cases
+Dưới đây là một số kịch bản kiểm thử (Test Cases) tiêu biểu đã được thiết kế và thực thi để đảm bảo chất lượng hệ thống, minh họa cho luồng Đăng nhập và luồng Đặt vé:
+
+| Test case ID | Test Objective | Pre-condition | Steps | Test data | Expected result | Post-condition | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| TC_001_S1.1 | Đăng nhập thành công | APP đã được khởi động | 1. Nhập tên người dùng<br>2. Nhập mật khẩu cho tài khoản<br>3. Nhấp vào nút "Đăng nhập" | Tên người dùng hợp lệ<br>Mật khẩu hợp lệ | Người dùng đã đăng nhập thành công. | Hiển thị vô trang home | Pass |
+| TC_002_S1.1 | Đăng nhập thất bại | APP đã được khởi động | 1. Nhập tên người dùng<br>2. Nhập mật khẩu cho tài khoản<br>3. Nhấp vào nút "Đăng nhập" | Tên người dùng không hợp lệ<br>Mật khẩu không hợp lệ | Người dùng đăng nhập không thành công. | Hiển thị thông báo đăng nhập thất bại | Pass |
+| TC_003_S1.1 | Xác minh lỗi khi để trống tên người dùng | APP đã được khởi động | 1. Để trống trường tên người dùng.<br>2. Nhập mật khẩu hợp lệ.<br>3. Nhấp vào nút "Đăng nhập". | | Viền đỏ ô “Tên đăng nhập”<br><br>Thông báo lỗi: “Vui lòng nhập tên đăng nhập” | Không đăng nhập, vẫn ở màn hình đăng nhập | Pass |
+| TC_004_S2.1 | Kiểm tra tính toán giá vé khi đặt Tour | Đã đăng nhập, chọn ngày có đủ chỗ | 1. Bấm đặt Tour bất kỳ<br>2. Chọn số lượng: 2 Người lớn, 1 Trẻ em<br>3. Kiểm tra tiền | Giá NL: 100%, TE: 75% | Hệ thống tính đúng tổng tiền dựa trên công thức quy định. | Đơn đặt chỗ ở trạng thái Pending. | Pass |
+| TC_005_S2.1 | Đặt Tour khi không đủ chỗ | Đã đăng nhập, chọn ngày chỉ còn 1 chỗ | 1. Chọn ngày khởi hành<br>2. Nhập số lượng khách là 2<br>3. Bấm "Đặt ngay" | Số khách (2) > Số chỗ trống (1) | Báo lỗi "Không đủ số lượng chỗ trống". Ngăn chặn tạo đơn hàng. | Vẫn ở màn hình Đặt vé. | Pass |
+| TC_006_S1.2 | Đăng ký tài khoản thành công | Chưa đăng nhập | 1. Nhập Họ tên, Email mới, Mật khẩu<br>2. Nhấp "Đăng ký" | Email chưa từng sử dụng | Tài khoản được lưu vào CSDL, mã hóa mật khẩu thành công. | Chuyển hướng về trang Đăng nhập kèm thông báo. | Pass |
+| TC_007_S1.2 | Đăng ký thất bại (Trùng Email) | Chưa đăng nhập | 1. Nhập Email đã tồn tại trong hệ thống<br>2. Nhấp "Đăng ký" | Email đã tồn tại | Hệ thống báo lỗi trùng lặp dữ liệu. | Vẫn ở trang Đăng ký, hiển thị thông báo lỗi màu đỏ. | Pass |
+| TC_008_S3.1 | Tìm kiếm Tour bằng từ khóa | Trình duyệt ở Trang chủ | 1. Nhập từ khóa vào ô tìm kiếm<br>2. Nhấn Enter hoặc nút Search | Từ khóa: "Đà Lạt" | Hiển thị chính xác các Tour có chứa từ khóa trong tên hoặc địa điểm. | Chuyển sang trang Kết quả tìm kiếm (Search Results). | Pass |
+| TC_009_S4.1 | Kiểm thử độ chính xác của AI | Mở cửa sổ Chatbot | 1. Gõ tin nhắn: "Bạn có tour nào đi Sapa không?"<br>2. Gửi | "Bạn có tour nào đi Sapa không?" | AI tự động gọi Function Calling xuống CSDL, lấy dữ liệu thật và trả lời. | Chatbox hiển thị thông tin kèm Link dẫn đến tour Sapa. | Pass |
+| TC_010_S5.1 | Quản trị viên duyệt đơn (Admin) | Đăng nhập tài khoản Admin | 1. Vào trang Quản lý Đặt chỗ<br>2. Chọn đơn hàng Pending<br>3. Chuyển thành Confirmed | Đơn hàng trạng thái Pending | Trạng thái được cập nhật, kích hoạt hệ thống tự động gửi Email hóa đơn. | Đơn hàng đổi màu sang Xanh lá, khách hàng nhận được email. | Pass |
+| TC_011_S1.3 | Đăng nhập bằng Google (OAuth2) | Ở màn hình Đăng nhập | 1. Nhấn nút "Tiếp tục với Google"<br>2. Chọn tài khoản Google | Tài khoản Google hợp lệ | Xác thực thành công thông qua cơ chế NextAuth an toàn. | Trở về màn hình chính, avatar Google được hiển thị | Pass |
+| TC_012_S3.2 | Xem chi tiết Tour (Giao diện) | Trình duyệt ở Trang chủ | 1. Click vào một Tour bất kỳ<br>2. Cuộn trang đọc lộ trình | Bất kỳ Tour ID nào hợp lệ | Giao diện tải đầy đủ thông tin: hình ảnh lớn, mô tả, lộ trình từng ngày. | Hiện ở trang Chi tiết Tour | Pass |
+| TC_013_S3.3 | Lọc Tour theo khoảng giá | Mở tab bộ lọc Tour | 1. Chọn mức giá "Từ 1 - 3 triệu"<br>2. Bấm áp dụng (Lọc) | Price range: 1,000,000 - 3,000,000 | Lưới Tour chỉ hiển thị các tour có giá nằm trong đúng khoảng đã chọn. | URL tự động cập nhật tham số `?minPrice=...` | Pass |
+| TC_014_S2.2 | Xem danh sách My Bookings | Đã đăng nhập, có đơn cũ | 1. Bấm Avatar -> My Bookings<br>2. Bấm sang tab "Đã xác nhận" | Tham số URL `?tab=CONFIRMED` | Hệ thống tự lọc và chỉ hiển thị các đơn hàng đã được xác nhận. | Giao diện thẻ vé (Ticket) render đúng dữ liệu | Pass |
+| TC_015_S6.1 | Đánh giá (Review) Tour | Đã mua tour thành công | 1. Vào trang chi tiết tour<br>2. Kéo xuống mục Review<br>3. Chọn 5 sao, gõ chữ, gửi | Rating: 5, Text: "Rất tốt" | Hiển thị thông báo "Cảm ơn bạn đã đánh giá", điểm sao trung bình được tính lại. | Dữ liệu Review được đẩy xuống Database. | Pass |
+| TC_016_S7.1 | Bảo mật: Trẻ quyền Admin API | Đăng nhập tài khoản User | 1. Mở Postman<br>2. Gửi lệnh `POST /api/tours` kèm Token | JWT Token có role là USER | Hệ thống Spring Boot từ chối quyền truy cập, văng lỗi HTTP 403 Forbidden. | CSDL không bị thay đổi, bảo mật an toàn. | Pass |
+| TC_017_S2.3 | Tự động hủy đơn quá hạn | Đơn Pending quá 15 phút | 1. Đợi quá 15 phút kể từ lúc đặt đơn<br>2. Tải lại trang trạng thái | Đơn hàng trạng thái Pending | Hệ thống ngầm (Cronjob) tự đổi đơn sang `CANCELLED` để thu hồi vé. | Số lượng `slots_available` của Tour được trả lại. | Pass |
+| TC_018_S5.2 | Admin: Thêm Tour mới | Đăng nhập tài khoản Admin | 1. Vào Dashboard -> Tour<br>2. Nhập thông tin Tour<br>3. Bấm Lưu | Title: "Tour miền Tây", Giá: ... | Báo thành công, Tour mới lập tức xuất hiện lên trang ngoài public. | Dữ liệu Tour mới được ghi nhận vào CSDL. | Pass |
+| TC_019_S5.3 | Admin: Thêm lịch khởi hành | Đăng nhập tài khoản Admin | 1. Chọn Tour bất kỳ<br>2. Bấm Thêm đợt khởi hành<br>3. Điền ngày, số vé trống | Ngày: 30/12/2026, Vé: 20 | Đợt khởi hành được tạo, khách hàng có thể tiến hành đặt mua vé trên ngày này. | Bảng `TourDeparture` được update bản ghi. | Pass |
+| TC_020_S1.4 | Đăng xuất an toàn (Logout) | Đang đăng nhập hệ thống | 1. Bấm vào Avatar góc phải<br>2. Chọn menu "Đăng xuất" | Bất kỳ phiên làm việc nào | Hệ thống xóa sạch Cookie/Session, tải lại trang web về dạng khách lạ. | Nếu cố truy cập My Bookings sẽ bị đẩy ra trang Login. | Pass |
+| TC_021_S1.5 | Chỉnh sửa Profile (Đổi mật khẩu) | Đã đăng nhập hệ thống | 1. Vào trang cá nhân<br>2. Đổi mật khẩu mới<br>3. Bấm "Cập nhật" | Mật khẩu cũ hợp lệ<br>Mật khẩu mới: "123456" | Mật khẩu được cập nhật thành công, thông báo hiển thị màu xanh. | Lần đăng nhập sau bắt buộc phải dùng mật khẩu mới. | Pass |
+| TC_022_S5.4 | Admin Xóa / Ẩn Tour | Đăng nhập tài khoản Admin | 1. Vào danh sách Tour<br>2. Bấm nút Ẩn/Xóa ở cột hành động | ID Tour: #99 | Tour bị ẩn khỏi giao diện khách hàng (Public) nhưng vẫn còn ở DB. | Dữ liệu không bị mất hoàn toàn (Soft delete). | Pass |
+| TC_023_S5.5 | Xem biểu đồ doanh thu Admin | Đăng nhập tài khoản Admin | 1. Truy cập trang Dashboard chính<br>2. Kiểm tra biểu đồ Bar Chart | Dữ liệu giao dịch tháng hiện tại | Biểu đồ load thành công, hiển thị chính xác tổng tiền của các đơn "Confirmed". | Biểu đồ Recharts vẽ đúng tỉ lệ. | Pass |
+| TC_024_S6.2 | Quản lý Wishlist (Tour yêu thích) | Đã đăng nhập tài khoản | 1. Bấm icon Trái tim ở 1 Tour bất kỳ<br>2. Vào trang Wishlist kiểm tra | Tour ID bất kỳ | Tour được thêm vào danh sách yêu thích thành công. | Giao diện hiển thị icon Trái tim chuyển sang màu đỏ. | Pass |
+| TC_025_S4.2 | Xử lý lỗi hệ thống AI Chatbot | Mở Chatbot AI | 1. Ngắt mạng tạm thời hoặc nhập API Key sai<br>2. Chat với bot | Tin nhắn text | Bắt được lỗi Exception, hiển thị "Hệ thống AI đang quá tải". | Ứng dụng không bị crash màn hình trắng. | Pass |
+
+### 4.3. Đánh giá hiệu năng và bảo mật (Non-Functional Testing)
 - **Hiệu năng Web (Performance):** Tốc độ tải trang Front-end gần như tức thì. Nhờ kiến trúc Server Components của Next.js 16, mã HTML được tạo ra từ Server và đẩy xuống Client, kết hợp với các bộ nén ảnh tự động (Next Image), chỉ số Google Lighthouse đạt mức rất cao (Performance > 90, SEO = 100).
 - **Hiệu năng API (Load Testing):** Back-end chịu tải tốt, kết nối Database Connection Pool (HikariCP) giúp ứng phó nhanh với hàng loạt truy vấn liên tục. Các cấu trúc database được thiết kế có Khóa ngoại (Foreign Key) hợp lý và tạo lập chỉ mục (Indexes).
 - **Bảo mật hệ thống:** Hệ thống hoàn toàn miễn nhiễm với các lỗi phổ biến như SQL Injection do Spring Data JPA tự động tham số hóa câu truy vấn. Bảo mật xác thực bằng JWT Token có thời hạn (Expiration), cùng với thuật toán băm mật khẩu Bcrypt đảm bảo dữ liệu mật của người dùng luôn được an toàn kể cả khi cơ sở dữ liệu bị lộ lọt.
