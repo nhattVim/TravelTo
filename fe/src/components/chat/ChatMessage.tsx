@@ -12,6 +12,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export default function ChatMessage({ message }: { message: Message }) {
+  if (!message.content || !message.content.trim()) {
+    return null;
+  }
+
   const isUser = message.role === "user";
 
   return (

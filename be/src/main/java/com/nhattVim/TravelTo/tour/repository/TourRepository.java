@@ -16,8 +16,11 @@ public interface TourRepository extends JpaRepository<Tour, Long> {
       FROM Tour t
       WHERE t.status = :status
         AND (:provinceCode IS NULL OR :provinceCode = '' OR LOWER(t.provinceCode) = LOWER(:provinceCode))
-        AND (:departureLocation IS NULL OR :departureLocation = '' OR LOWER(t.departureLocation) = LOWER(:departureLocation))
-        AND (:destinationLocation IS NULL OR :destinationLocation = '' OR LOWER(t.destinationLocation) = LOWER(:destinationLocation))
+        AND (:departureLocation IS NULL OR :departureLocation = '' OR LOWER(t.departureLocation) LIKE LOWER(CONCAT('%', :departureLocation, '%')))
+        AND (:destinationLocation IS NULL OR :destinationLocation = '' 
+             OR LOWER(t.destinationLocation) LIKE LOWER(CONCAT('%', :destinationLocation, '%'))
+             OR LOWER(t.title) LIKE LOWER(CONCAT('%', :destinationLocation, '%'))
+             OR LOWER(t.provinceName) LIKE LOWER(CONCAT('%', :destinationLocation, '%')))
         AND (:minPrice IS NULL OR t.price >= :minPrice)
         AND (:maxPrice IS NULL OR t.price <= :maxPrice)
       """)
