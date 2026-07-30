@@ -36,7 +36,7 @@ Bạn phải luôn giữ thái độ lịch sự, thân thiện, chuyên nghiệ
           execute: async (params) => {
             try {
               const res = await getTours(params);
-              return { tours: res.items.slice(0, 5) }; // Trả về object thay vì array để tránh lỗi Proto field
+              return { tours: res.items.slice(0, 5) };
             } catch {
               return { error: 'Gặp sự cố khi lấy danh sách tour từ hệ thống.' };
             }

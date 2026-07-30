@@ -1,6 +1,7 @@
 package com.nhattVim.TravelTo.tour.dto;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public record TourListItemResponse(
         Long id,
@@ -15,5 +16,5 @@ public record TourListItemResponse(
         String departureLocation,
         String destinationLocation,
         int slotsAvailable,
-        java.util.List<String> nextDepartures) {
+        List<String> nextDepartures) {
 }

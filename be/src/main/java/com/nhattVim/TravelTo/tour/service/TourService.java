@@ -20,7 +20,10 @@ import com.nhattVim.TravelTo.tour.repository.TourRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -63,7 +66,7 @@ public class TourService {
         pageable);
 
     List<Long> tourIds = tourPage.getContent().stream().map(Tour::getId).toList();
-    java.util.Map<Long, List<TourDeparture>> departuresMap = fetchNextDeparturesMapFull(tourIds);
+    Map<Long, List<TourDeparture>> departuresMap = fetchNextDeparturesMapFull(tourIds);
 
     List<TourListItemResponse> items = tourPage.getContent().stream()
         .map(tour -> toListItem(tour, departuresMap.getOrDefault(tour.getId(), new ArrayList<>())))
@@ -207,21 +210,21 @@ public class TourService {
   public List<TourListItemResponse> getHighlights() {
     List<Tour> tours = tourRepository.findTop6ByStatusOrderByCreatedAtDesc(TourStatus.PUBLISHED);
     List<Long> tourIds = tours.stream().map(Tour::getId).toList();
-    java.util.Map<Long, List<TourDeparture>> departuresMap = fetchNextDeparturesMapFull(tourIds);
+    Map<Long, List<TourDeparture>> departuresMap = fetchNextDeparturesMapFull(tourIds);
     
     return tours.stream()
         .map(tour -> toListItem(tour, departuresMap.getOrDefault(tour.getId(), new ArrayList<>())))
         .toList();
   }
 
-  private java.util.Map<Long, List<TourDeparture>> fetchNextDeparturesMapFull(List<Long> tourIds) {
+  private Map<Long, List<TourDeparture>> fetchNextDeparturesMapFull(List<Long> tourIds) {
     if (tourIds == null || tourIds.isEmpty()) {
-      return new java.util.HashMap<>();
+      return new HashMap<>();
     }
     List<TourDeparture> allDepartures = tourDepartureRepository
         .findByTour_IdInAndDepartureDateGreaterThanEqualOrderByDepartureDateAsc(tourIds, LocalDate.now());
     return allDepartures.stream()
-        .collect(java.util.stream.Collectors.groupingBy(d -> d.getTour().getId()));
+        .collect(Collectors.groupingBy(d -> d.getTour().getId()));
   }
 
   private TourListItemResponse toListItem(Tour tour, List<TourDeparture> nextDepartures) {
@@ -456,7 +459,7 @@ public class TourService {
     Page<Tour> tours = tourRepository.findRelatedToursByPrice(TourStatus.PUBLISHED, tour.getId(), tour.getPrice(), pageRequest);
     
     List<Long> tourIds = tours.getContent().stream().map(Tour::getId).toList();
-    java.util.Map<Long, List<TourDeparture>> departuresMap = fetchNextDeparturesMapFull(tourIds);
+    Map<Long, List<TourDeparture>> departuresMap = fetchNextDeparturesMapFull(tourIds);
     
     List<TourListItemResponse> items = tours.getContent().stream()
         .map(t -> toListItem(t, departuresMap.getOrDefault(t.getId(), new ArrayList<>())))

@@ -379,7 +379,7 @@ public class DataSeeder {
   private List<TourDeparture> generateDepartures(Tour tour) {
     List<TourDeparture> departures = new ArrayList<>();
     LocalDate firstMonth = LocalDate.now().withDayOfMonth(1).plusMonths(1);
-    java.util.Random random = new java.util.Random();
+    Random random = new Random();
 
     for (int monthOffset = 0; monthOffset < 5; monthOffset++) {
       LocalDate month = firstMonth.plusMonths(monthOffset);
@@ -403,7 +403,6 @@ public class DataSeeder {
               .build());
         }
 
-        // Jump some random days forward to next departure
         day += 5 + random.nextInt(7);
       }
     }

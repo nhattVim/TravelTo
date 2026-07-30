@@ -2,6 +2,7 @@ package com.nhattVim.TravelTo.tour.repository;
 
 import com.nhattVim.TravelTo.tour.entity.TourDeparture;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,6 +20,6 @@ public interface TourDepartureRepository extends JpaRepository<TourDeparture, Lo
   List<TourDeparture> findByTour_IdAndDepartureDateGreaterThanEqualOrderByDepartureDateAsc(Long tourId,
       LocalDate fromDate);
 
-  List<TourDeparture> findByTour_IdInAndDepartureDateGreaterThanEqualOrderByDepartureDateAsc(java.util.Collection<Long> tourIds,
+  List<TourDeparture> findByTour_IdInAndDepartureDateGreaterThanEqualOrderByDepartureDateAsc(Collection<Long> tourIds,
       LocalDate fromDate);
 }

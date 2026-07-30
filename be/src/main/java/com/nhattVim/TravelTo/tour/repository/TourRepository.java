@@ -2,6 +2,7 @@ package com.nhattVim.TravelTo.tour.repository;
 
 import com.nhattVim.TravelTo.tour.entity.Tour;
 import com.nhattVim.TravelTo.tour.entity.TourStatus;
+import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,8 +30,8 @@ public interface TourRepository extends JpaRepository<Tour, Long> {
       @Param("provinceCode") String provinceCode,
       @Param("departureLocation") String departureLocation,
       @Param("destinationLocation") String destinationLocation,
-      @Param("minPrice") java.math.BigDecimal minPrice,
-      @Param("maxPrice") java.math.BigDecimal maxPrice,
+      @Param("minPrice") BigDecimal minPrice,
+      @Param("maxPrice") BigDecimal maxPrice,
       Pageable pageable);
 
   Page<Tour> findByStatus(TourStatus status, Pageable pageable);
@@ -63,6 +64,6 @@ public interface TourRepository extends JpaRepository<Tour, Long> {
   Page<Tour> findRelatedToursByPrice(
       @Param("status") TourStatus status,
       @Param("id") Long id,
-      @Param("price") java.math.BigDecimal price,
+      @Param("price") BigDecimal price,
       Pageable pageable);
 }

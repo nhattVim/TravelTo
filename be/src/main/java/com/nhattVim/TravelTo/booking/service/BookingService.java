@@ -16,12 +16,22 @@ import com.nhattVim.TravelTo.common.service.EmailService;
 import com.nhattVim.TravelTo.user.entity.User;
 import com.nhattVim.TravelTo.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
 public class BookingService {
+
+  private static final Logger log = LoggerFactory.getLogger(BookingService.class);
 
   private final BookingRepository bookingRepository;
   private final TourRepository tourRepository;
@@ -73,11 +83,11 @@ public class BookingService {
     departure.setSlotsAvailable(departure.getSlotsAvailable() - totalSlotsRequired);
     tour.setSlotsAvailable(Math.max(0, tour.getSlotsAvailable() - totalSlotsRequired));
 
-    java.math.BigDecimal basePrice = departure.getPrice();
-    java.math.BigDecimal adultPrice = basePrice.multiply(java.math.BigDecimal.valueOf(adultGuests));
-    java.math.BigDecimal childPrice = basePrice.multiply(java.math.BigDecimal.valueOf(childGuests)).multiply(java.math.BigDecimal.valueOf(0.75));
-    java.math.BigDecimal toddlerPrice = basePrice.multiply(java.math.BigDecimal.valueOf(toddlerGuests)).multiply(java.math.BigDecimal.valueOf(0.5));
-    java.math.BigDecimal totalPrice = adultPrice.add(childPrice).add(toddlerPrice);
+    BigDecimal basePrice = departure.getPrice();
+    BigDecimal adultPrice = basePrice.multiply(BigDecimal.valueOf(adultGuests));
+    BigDecimal childPrice = basePrice.multiply(BigDecimal.valueOf(childGuests)).multiply(BigDecimal.valueOf(0.75));
+    BigDecimal toddlerPrice = basePrice.multiply(BigDecimal.valueOf(toddlerGuests)).multiply(BigDecimal.valueOf(0.5));
+    BigDecimal totalPrice = adultPrice.add(childPrice).add(toddlerPrice);
 
     Booking booking = Booking.builder()
         .user(user)
@@ -139,8 +149,7 @@ public class BookingService {
       try {
         sendBookingConfirmationEmail(booking);
       } catch (Exception e) {
-        org.slf4j.LoggerFactory.getLogger(BookingService.class)
-            .error("Failed to send booking confirmation email for booking ID: {}", booking.getId(), e);
+        log.error("Failed to send booking confirmation email for booking ID: {}", booking.getId(), e);
       }
     }
 
@@ -151,10 +160,10 @@ public class BookingService {
     String to = booking.getUser().getEmail();
     String subject = "Xác nhận đặt tour thành công - TravelTo #" + booking.getId();
     
-    String formattedDate = booking.getTravelDate().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+    String formattedDate = booking.getTravelDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     String formattedPrice = String.format("%,d VNĐ", booking.getTotalPrice().longValue());
     
-    List<String> guestDetails = new java.util.ArrayList<>();
+    List<String> guestDetails = new ArrayList<>();
     if (booking.getAdultGuests() > 0) guestDetails.add(booking.getAdultGuests() + " người lớn");
     if (booking.getChildGuests() > 0) guestDetails.add(booking.getChildGuests() + " trẻ em");
     if (booking.getToddlerGuests() > 0) guestDetails.add(booking.getToddlerGuests() + " trẻ nhỏ");
@@ -292,15 +301,14 @@ public class BookingService {
         booking.getContactNotes());
   }
 
-  @org.springframework.scheduling.annotation.Scheduled(fixedDelay = 300000) // 5 minutes
+  @Scheduled(fixedDelay = 300000)
   @Transactional
   public void cancelExpiredPendingBookings() {
-    java.time.Instant expiryTime = java.time.Instant.now().minus(java.time.Duration.ofMinutes(15));
+    Instant expiryTime = Instant.now().minus(Duration.ofMinutes(15));
     List<Booking> expiredBookings = bookingRepository.findByStatusAndCreatedAtBefore(BookingStatus.PENDING, expiryTime);
     
     if (!expiredBookings.isEmpty()) {
-      org.slf4j.LoggerFactory.getLogger(BookingService.class)
-          .info("Found {} expired PENDING bookings. Cancelling and restoring slots...", expiredBookings.size());
+      log.info("Found {} expired PENDING bookings. Cancelling and restoring slots...", expiredBookings.size());
           
       for (Booking booking : expiredBookings) {
         booking.setStatus(BookingStatus.CANCELLED);

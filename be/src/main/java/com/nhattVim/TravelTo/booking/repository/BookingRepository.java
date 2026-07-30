@@ -2,6 +2,8 @@ package com.nhattVim.TravelTo.booking.repository;
 
 import com.nhattVim.TravelTo.booking.entity.Booking;
 import com.nhattVim.TravelTo.booking.entity.BookingStatus;
+import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,13 +23,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
   List<Booking> findByStatus(BookingStatus status);
 
-  List<Booking> findByStatusAndCreatedAtBefore(BookingStatus status, java.time.Instant expiryTime);
+  List<Booking> findByStatusAndCreatedAtBefore(BookingStatus status, Instant expiryTime);
 
   @Query("SELECT b FROM Booking b WHERE b.status IN ('CONFIRMED', 'COMPLETED') AND b.createdAt >= :startDate")
-  List<Booking> findBookingsForRevenue(@Param("startDate") java.time.Instant startDate);
+  List<Booking> findBookingsForRevenue(@Param("startDate") Instant startDate);
 
   @Query("SELECT SUM(b.totalPrice) FROM Booking b WHERE b.status IN ('CONFIRMED', 'COMPLETED')")
-  java.math.BigDecimal getTotalRevenue();
+  BigDecimal getTotalRevenue();
 
   long countByStatus(BookingStatus status);
 }
