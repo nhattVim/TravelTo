@@ -16,13 +16,13 @@ export function BackendHealthCheck({ children }: { children: React.ReactNode }) 
       try {
         const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
         // Sử dụng endpoint actuator/health của Spring Boot
-        const res = await fetch(`${API_BASE_URL}/actuator/health`, { 
+        const res = await fetch(`${API_BASE_URL}/actuator/health`, {
           cache: 'no-store',
           headers: {
             'Accept': 'application/json'
           }
         });
-        
+
         if (res.ok && mounted) {
           setIsHealthy(true);
           // Nếu trước đó đang lỗi, ta có thể refresh lại trang để SSR chạy lại thành công
@@ -40,7 +40,7 @@ export function BackendHealthCheck({ children }: { children: React.ReactNode }) 
     };
 
     checkHealth();
-    
+
     // Polling mỗi 3 giây nếu backend chưa sẵn sàng
     interval = setInterval(() => {
       if (isHealthy !== true) {
@@ -57,7 +57,7 @@ export function BackendHealthCheck({ children }: { children: React.ReactNode }) 
   // isHealthy === null: Đang check lần đầu, cứ render children (để ko block SSR)
   // isHealthy === true: Backend ổn định, render children bình thường
   // isHealthy === false: Backend lỗi/chưa lên, hiện loading screen đè lên toàn màn hình
-  
+
   return (
     <>
       {children}
@@ -68,9 +68,6 @@ export function BackendHealthCheck({ children }: { children: React.ReactNode }) 
             <h2 className="text-2xl font-semibold text-[#083b2d]">
               Hệ thống đang khởi động...
             </h2>
-            <p className="max-w-md text-[#4d7366]">
-              Backend chưa sẵn sàng hoặc đang được bật. Vui lòng chờ trong giây lát, màn hình sẽ tự biến mất khi kết nối thành công.
-            </p>
           </div>
         </div>
       )}
