@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ChatWidget from "@/components/chat/ChatWidget";
+import { BackendHealthCheck } from "@/components/layout/backend-health-check";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="vi">
       <body className="antialiased">
-        {children}
+        <BackendHealthCheck>
+          {children}
+        </BackendHealthCheck>
         <ChatWidget />
       </body>
     </html>
